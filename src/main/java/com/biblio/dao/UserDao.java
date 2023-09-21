@@ -55,6 +55,9 @@ public final class UserDao extends Model {
     }
 
     public User getUserWithRoles() {
+
+        User user = new User();
+
         boolean flag = true;
         try {
             String query = "SELECT u.*, r.role, r.id r_id " +
@@ -103,7 +106,7 @@ public final class UserDao extends Model {
             e.printStackTrace();
         }
 
-        return this.user;
+        return user;
     }
 
     public Boolean isExistedUser() {

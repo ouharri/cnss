@@ -1,6 +1,6 @@
 package com.biblio.view.Authentication;
 
-import com.biblio.app.Controllers.AuthenticationController;
+import com.biblio.app.Services.AuthenticationController;
 
 import javax.swing.*;
 import java.awt.*;
