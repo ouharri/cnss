@@ -1,4 +1,4 @@
-module com.macnss {
+module com.biblio {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -8,14 +8,13 @@ module com.macnss {
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
-
-    requires lombok;
+//            requires eu.hansolo.tilesfx;
     requires java.sql;
-    requires org.postgresql.jdbc;
+    requires lombok;
+    requires jBCrypt;
+    requires mysql.connector.java;
     requires java.desktop;
-    requires jakarta.mail;
-    requires jbcrypt;
 
-    opens com.macnss;
+    opens com.macnss to javafx.fxml;
     exports com.macnss;
 }
