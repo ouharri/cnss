@@ -15,6 +15,6 @@ module com.biblio {
     requires mysql.connector.java;
     requires java.desktop;
 
-    opens com.biblio to javafx.fxml;
-    exports com.biblio;
+    opens com.macnss to javafx.fxml;
+    exports com.macnss;
 }
