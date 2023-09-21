@@ -19,7 +19,7 @@ public class App implements AutoCloseable{
     }
 
     public static void main(String[] args) throws Exception {
-//        new Signing();
+        new Signing();
     }
 
     @Override
