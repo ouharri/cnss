@@ -46,7 +46,7 @@ public class AuthenticationController {
 
         try(UserDao userDao = new UserDao(user)) {
             if (userDao.isExistedUser()) {
-                throw new existingUserException(this.user);
+                throw new Exception("User already exists");
             } else {
                     return userDao.create();
             }
