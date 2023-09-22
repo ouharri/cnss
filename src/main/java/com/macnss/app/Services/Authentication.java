@@ -8,14 +8,14 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AuthenticationController {
+public class Authentication {
 
     private final User user;
 
     /**
      * Constructs a new AuthenticationController.
      */
-    public AuthenticationController() {
+    public Authentication() {
         this.user = new User();
     }
 
