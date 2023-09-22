@@ -3,6 +3,8 @@ package com.macnss.app.Models;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.sql.Date;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class visite extends Document  {

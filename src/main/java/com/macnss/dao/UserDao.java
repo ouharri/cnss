@@ -100,7 +100,6 @@ public final class UserDao extends Model {
                 }
             }
 
-            this.user.hasRoles(roles);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -196,7 +195,6 @@ public final class UserDao extends Model {
 
             if(user.getCnie() == null) return null;
 
-            user.hasRoles(roles);
 
             return user;
 
@@ -250,7 +248,6 @@ public final class UserDao extends Model {
                 }
             }
 
-            this.user.hasRoles(roles);
 
             return this.user;
 
@@ -305,7 +302,6 @@ public final class UserDao extends Model {
                 }
             }
 
-            this.user.hasRoles(roles);
 
             return this.user;
 

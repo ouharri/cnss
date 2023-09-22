@@ -63,7 +63,7 @@ public class Authentication {
      * @param password           The user's password.
      * @return `true` if authentication is successful, `false` otherwise.
      */
-    public boolean authenticate(String cnieOrEmailOrPhone, String password) {
+    public boolean PreAuthenticate(String cnieOrEmailOrPhone, String password) {
 
         User user = getUserByCnieOrEmailOrPhone(cnieOrEmailOrPhone);
 
@@ -72,6 +72,11 @@ public class Authentication {
         }
 
         return false;
+    }
+
+    public boolean Authenticate (String username,String password,String code) {
+
+        return true;
     }
 
     /**

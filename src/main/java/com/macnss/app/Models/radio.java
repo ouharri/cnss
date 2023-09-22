@@ -1,5 +1,7 @@
 package com.macnss.app.Models;
 
+import java.sql.Date;
+
 public class radio extends Document  {
 
 	private String radiologue;

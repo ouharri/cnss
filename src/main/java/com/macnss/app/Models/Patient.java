@@ -1,10 +1,12 @@
 package com.macnss.app.Models;
 
-public class Patient extends user {
+import com.macnss.app.Enums.FileStatus;
+
+public class Patient extends User {
 
 	private String matricule;
 
-	public DossierStatut viewStatut(String matricule) {
+	public FileStatus viewStatut(String matricule) {
 		return null;
 	}
 
