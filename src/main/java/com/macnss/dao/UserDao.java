@@ -1,7 +1,6 @@
 package com.macnss.dao;
 
 import com.macnss.app.Enums.Gender;
-import com.macnss.app.Models.Role;
 import com.macnss.app.Models.User;
 import com.macnss.libs.Model;
 
@@ -54,60 +53,6 @@ public final class UserDao extends Model {
         return super.softDelete(new String[]{String.valueOf(this.user.getCnie())});
     }
 
-    public User getUserWithRoles() {
-
-        User user = new User();
-
-        boolean flag = true;
-        try {
-            String query = "SELECT u.*, r.role, r.id r_id " +
-                    "FROM users u " +
-                    "LEFT JOIN users_roles ur ON u.cnie = ur.user " +
-                    "LEFT JOIN roles r ON ur.role = r.id " +
-                    "WHERE u.cnie = ? AND u.delete_at IS NULL";
-
-            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-            preparedStatement.setString(1, this.user.getCnie());
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            List<Role> roles = new ArrayList<>();
-
-            while (resultSet.next()) {
-                if (flag) {
-                    this.user.setUser(
-                            resultSet.getString("cnie"),
-                            resultSet.getString("first_name"),
-                            resultSet.getString("last_name"),
-                            Gender.valueOf(resultSet.getString("gender")),
-                            resultSet.getString("email"),
-                            resultSet.getString("phone"),
-                            resultSet.getString("password")
-                    );
-                    flag = false;
-                }
-
-                int id = resultSet.getInt("r_id");
-                String roleTitle = resultSet.getString("role");
-
-                if (roleTitle != null && id > 0) {
-                    Role role = new Role();
-                        role.setRole(
-                                id,
-                                roleTitle
-                        );
-                        roles.add(role);
-                }
-            }
-
-            this.user.hasRoles(roles);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return user;
-    }
 
     public Boolean isExistedUser() {
         try {
@@ -159,7 +104,6 @@ public final class UserDao extends Model {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            List<Role> roles = new ArrayList<>();
 
             while (resultSet.next()) {
 
@@ -183,20 +127,11 @@ public final class UserDao extends Model {
                     int role_id = resultSet.getInt("role_id");
                     String roleTitle = resultSet.getString("role");
 
-                    if (roleTitle != null && role_id > 0) {
-                        Role role = new Role();
-                        role.setRole(
-                                role_id,
-                                roleTitle
-                        );
-                        roles.add(role);
-                    }
 
                 }
 
             if(user.getCnie() == null) return null;
 
-            user.hasRoles(roles);
 
             return user;
 
@@ -221,8 +156,6 @@ public final class UserDao extends Model {
             preparedStatement.setString(1, this.user.getEmail());
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            List<Role> roles = new ArrayList<>();
-
             while (resultSet.next()) {
                 if (flag) {
                     this.user.setUser(
@@ -240,17 +173,8 @@ public final class UserDao extends Model {
                 int id = resultSet.getInt("id");
                 String roleTitle = resultSet.getString("role");
 
-                if (roleTitle != null && id > 0) {
-                    Role role = new Role();
-                    role.setRole(
-                            id,
-                            roleTitle
-                    );
-                    roles.add(role);
-                }
             }
 
-            this.user.hasRoles(roles);
 
             return this.user;
 
@@ -276,8 +200,6 @@ public final class UserDao extends Model {
             preparedStatement.setString(1, this.user.getPhone());
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            List<Role> roles = new ArrayList<>();
-
             while (resultSet.next()) {
                 if (flag) {
                     this.user.setUser(
@@ -295,17 +217,8 @@ public final class UserDao extends Model {
                 int id = resultSet.getInt("id");
                 String roleTitle = resultSet.getString("role");
 
-                if (roleTitle != null && id > 0) {
-                    Role role = new Role();
-                    role.setRole(
-                            id,
-                            roleTitle
-                    );
-                    roles.add(role);
-                }
             }
 
-            this.user.hasRoles(roles);
 
             return this.user;
 

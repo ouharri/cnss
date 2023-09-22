@@ -55,14 +55,14 @@ public class Signing extends JFrame implements ActionListener {
         passwordLabel.setIcon(passwordIcon);
         password.setBounds(60, 425, 460, 35);
 
-        loginButton.setBounds(60, 550, 175, 35);
+        loginButton.setBounds(60, 560, 175, 35);
         loginButton.setForeground(new Color(29, 170, 172));
-//        loginButton.setBorder(BorderFactory.createLineBorder(new Color(26, 71, 132), 2));
+        //loginButton.setBorder(BorderFactory.createLineBorder(new Color(26, 71, 132), 2));
         loginButton.setFont(new Font("Arial", Font.PLAIN, 16));
         loginButton.setOpaque(true);
 
 
-        forgetPasswordButton.setBounds(360, 550, 300, 35);
+        forgetPasswordButton.setBounds(360, 560, 300, 35);
         forgetPasswordButton.setForeground(new Color(26, 71, 132));
         forgetPasswordButton.setFont(new Font("Arial", Font.PLAIN, 16));
         forgetPasswordButton.setBorderPainted(false);
