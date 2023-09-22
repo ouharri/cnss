@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,16 +22,16 @@ public class User {
     protected String password;
     protected java.sql.Timestamp delete_at = null;
 
-    protected List<Role> roles = new ArrayList<Role>();
-
     public Map<String, String> getUser() {
+
         Map<String, String> UserData = new HashMap<>();
+
         UserData.put("cnie", this.cnie);
         UserData.put("first_name", this.first_name);
         UserData.put("last_name", this.last_name);
         UserData.put("email", this.email);
-        UserData.put("phone", String.valueOf(this.phone));
-        UserData.put("gender", String.valueOf(this.gender));
+        UserData.put("phone", this.phone);
+        UserData.put("gender", this.gender.toString());
         UserData.put("password", this.password);
         return UserData;
     }
@@ -51,11 +50,6 @@ public class User {
         this.cnie = cnie;
         this.first_name = firstName;
         this.last_name = lastName;
-    }
-
-
-    public void hasRoles(List<Role> roles) {
-        this.roles = roles;
     }
 
     public String getFullName() {

@@ -1,6 +1,6 @@
 package com.macnss.view.Authentication;
 
-import com.macnss.app.Services.AuthenticationController;
+import com.macnss.app.Services.Authentication;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 
 public class Signing extends JFrame implements ActionListener {
 
-    AuthenticationController auth;
+    Authentication auth;
 
     private JTextField username;
     private JPasswordField password;
@@ -21,7 +21,7 @@ public class Signing extends JFrame implements ActionListener {
     private Image logo;
 
     public Signing() {
-        auth = new AuthenticationController();
+        auth = new Authentication();
 
         setTitle("Signing");
         setSize(600, 700);
@@ -94,7 +94,7 @@ public class Signing extends JFrame implements ActionListener {
             String enteredUsername = username.getText();
             String enteredPassword = new String(password.getPassword());
 
-            if (auth.authenticate(enteredUsername, enteredPassword)) {
+            if (auth.PreAuthenticate(enteredUsername, enteredPassword)) {
                 JOptionPane.showMessageDialog(this, "You are successfully logged in", "Success", JOptionPane.INFORMATION_MESSAGE);
 
                 dispose();
