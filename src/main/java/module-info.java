@@ -8,12 +8,14 @@ module com.biblio {
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
-//            requires eu.hansolo.tilesfx;
-    requires java.sql;
+
     requires lombok;
-    requires jBCrypt;
-    requires mysql.connector.java;
+    requires java.sql;
+//    requires jBCrypt;
+    requires org.postgresql.jdbc;
     requires java.desktop;
+    requires jakarta.mail;
+    requires jbcrypt;
 
     opens com.macnss to javafx.fxml;
     exports com.macnss;
