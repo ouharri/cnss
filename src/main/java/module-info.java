@@ -16,6 +16,6 @@ module com.macnss {
     requires jakarta.mail;
     requires jbcrypt;
 
-    opens com.macnss to javafx.fxml;
+    opens com.macnss;
     exports com.macnss;
 }
