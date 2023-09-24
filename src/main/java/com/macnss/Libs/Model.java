@@ -1,7 +1,7 @@
-package com.macnss.libs;
+package com.macnss.Libs;
 
-import com.macnss.core.database;
-import com.macnss.interfaces.CRUD;
+import com.macnss.Core.database;
+import com.macnss.interfaces.Libs.CRUD;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -518,7 +518,7 @@ public class Model implements AutoCloseable, CRUD {
             query += whereClause.toString();
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
 
-            java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(System.currentTimeMillis());
+            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
             preparedStatement.setTimestamp(1, currentTimestamp);
 
             for (int i = 0; i < ids.length; i++) {

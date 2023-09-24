@@ -2,11 +2,10 @@ package com.macnss.dao;
 
 import com.macnss.app.Enums.Gender;
 import com.macnss.app.Models.User;
-import com.macnss.libs.Model;
+import com.macnss.Libs.Model;
 
 import java.sql.SQLException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

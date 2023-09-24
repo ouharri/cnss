@@ -1,6 +1,6 @@
 package com.macnss.main;
 
-import com.macnss.core.database;
+import com.macnss.Core.database;
 import com.macnss.view.Authentication.Signing;
 
 import java.sql.Connection;

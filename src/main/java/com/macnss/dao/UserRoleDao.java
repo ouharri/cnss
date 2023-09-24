@@ -1,6 +1,6 @@
 package com.macnss.dao;
 
-import com.macnss.libs.Model;
+import com.macnss.Libs.Model;
 
 public final class UserRoleDao extends Model {
     public UserRoleDao() {

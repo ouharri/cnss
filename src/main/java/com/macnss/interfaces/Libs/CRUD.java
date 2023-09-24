@@ -1,4 +1,4 @@
-package com.macnss.interfaces;
+package com.macnss.interfaces.Libs;
 
 import java.util.Map;
 import java.sql.*;

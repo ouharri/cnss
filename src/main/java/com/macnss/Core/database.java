@@ -1,6 +1,4 @@
-package com.macnss.core;
-
-import com.macnss.helpers.envLoader;
+package com.macnss.Core;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,10 +6,8 @@ import java.sql.SQLException;
 
 public class database {
     private static volatile Connection connection = null;
-    private static final envLoader env = new envLoader();
 
-    private database() {
-    }
+    private database() {}
 
     static {
         if (connection == null) {
