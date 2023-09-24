@@ -9,7 +9,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
 public class EmailService {
-    public void sendEmail(String recipient, String subject, String body) throws EmailException {
+    public void send(String recipient, String subject, String body) throws EmailException {
         try {
             Message message = new MimeMessage(MailProvider.getMailSession());
             message.setFrom(new InternetAddress(env.get("MAIL_SMTP_FROM")));
