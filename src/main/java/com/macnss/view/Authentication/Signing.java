@@ -24,7 +24,7 @@ public class Signing extends JFrame implements ActionListener {
         auth = new Authentication();
 
         setTitle("Signing");
-        setSize(600, 700);
+        setSize(560, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
@@ -45,24 +45,24 @@ public class Signing extends JFrame implements ActionListener {
         passwordLabel = new JLabel("Password :");
 
         JLabel logoLabel = new JLabel(new ImageIcon(logo));
-        logoLabel.setBounds(175, 10, 250, 250);
+        logoLabel.setBounds(155, 10, 250, 250);
 
-        usernameLabel.setBounds(60, 300, 470, 30);
+        usernameLabel.setBounds(40, 300, 470, 30);
         usernameLabel.setIcon(userIcon);
-        username.setBounds(60, 335, 460, 35);
+        username.setBounds(40, 335, 460, 35);
 
-        passwordLabel.setBounds(60, 390, 470, 30);
+        passwordLabel.setBounds(40, 390, 470, 30);
         passwordLabel.setIcon(passwordIcon);
-        password.setBounds(60, 425, 460, 35);
+        password.setBounds(40, 425, 460, 35);
 
-        loginButton.setBounds(60, 560, 175, 35);
+        loginButton.setBounds(45, 560, 170, 30);
         loginButton.setForeground(new Color(29, 170, 172));
         //loginButton.setBorder(BorderFactory.createLineBorder(new Color(26, 71, 132), 2));
         loginButton.setFont(new Font("Arial", Font.PLAIN, 16));
         loginButton.setOpaque(true);
 
 
-        forgetPasswordButton.setBounds(360, 560, 300, 35);
+        forgetPasswordButton.setBounds(340, 560, 300, 35);
         forgetPasswordButton.setForeground(new Color(26, 71, 132));
         forgetPasswordButton.setFont(new Font("Arial", Font.PLAIN, 16));
         forgetPasswordButton.setBorderPainted(false);

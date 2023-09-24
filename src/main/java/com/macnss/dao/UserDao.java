@@ -1,7 +1,7 @@
 package com.macnss.dao;
 
 import com.macnss.app.Enums.Gender;
-import com.macnss.app.Models.User;
+import com.macnss.app.Models.Abstract.User;
 import com.macnss.Libs.Model;
 
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ public final class UserDao extends Model {
 
     public UserDao() {
         super("users", new String[]{"cnie"});
-        this.user = new User();
+        this.user = new User(){};
     }
     public UserDao(User user) {
         super("users", new String[]{"cnie"});
@@ -51,7 +51,6 @@ public final class UserDao extends Model {
     public boolean delete() {
         return super.softDelete(new String[]{String.valueOf(this.user.getCnie())});
     }
-
 
     public Boolean isExistedUser() {
         try {
@@ -229,7 +228,7 @@ public final class UserDao extends Model {
     }
 
     public String[] getAllUser() {
-        List<Map<String, String>> resultList = this.getAll();
+        List<Map<String, String>> resultList = this.retrieveAll();
         String[] users = new String[resultList.size()];
 
         for (int i = 0; i < resultList.size(); i++) {

@@ -1,4 +1,4 @@
-package com.macnss.app.Models;
+package com.macnss.app.Models.Abstract;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,10 +8,7 @@ import lombok.EqualsAndHashCode;
 public abstract class Document {
 
 	private String code;
-
 	private String description;
-
 	private double payed_price;
-
 	private String url;
 }

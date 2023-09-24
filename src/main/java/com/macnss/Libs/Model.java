@@ -76,7 +76,7 @@ public class Model implements AutoCloseable, CRUD {
      *
      * @return A list of maps, where each map represents a row of data with column names as keys.
      */
-    public List<Map<String, String>> getAll() {
+    public List<Map<String, String>> retrieveAll() {
         List<Map<String, String>> resultList = new ArrayList<>();
         try {
             String query = "SELECT * FROM " + this._table;

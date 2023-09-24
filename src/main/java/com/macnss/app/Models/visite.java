@@ -1,5 +1,6 @@
 package com.macnss.app.Models;
 
+import com.macnss.app.Models.Abstract.Document;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -7,7 +8,7 @@ import java.sql.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class visite extends Document  {
+public class visite extends Document {
 
 	private String medcin;
 

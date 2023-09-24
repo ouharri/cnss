@@ -1,16 +1,14 @@
 package com.macnss.app.Services;
 
 import com.macnss.app.Enums.Gender;
-import com.macnss.app.Models.User;
+import com.macnss.app.Models.Abstract.User;
 import com.macnss.dao.UserDao;
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.macnss.helpers.AuthenticationHelpers;
 
 public class Authentication {
 
     private final User user;
+    private final AuthenticationHelpers hlp = new AuthenticationHelpers();
 
     /**
      * Constructs a new AuthenticationController.
@@ -41,7 +39,7 @@ public class Authentication {
                 gender,
                 email,
                 phone,
-                this.hashPassword(password)
+                hlp.hashPassword(password)
         );
 
         try(UserDao userDao = new UserDao(user)) {
@@ -68,14 +66,13 @@ public class Authentication {
         User user = getUserByCnieOrEmailOrPhone(cnieOrEmailOrPhone);
 
         if (user != null) {
-            return this.checkPassword(password, user.getPassword());
+            return hlp.checkPassword(password, user.getPassword());
         }
 
         return false;
     }
 
     public boolean Authenticate (String username,String password,String code) {
-
         return true;
     }
 
@@ -96,17 +93,6 @@ public class Authentication {
 
     }
 
-    private boolean isEmail(String input) {
-        String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$\n";
-        Pattern pattern = Pattern.compile(EMAIL_REGEX);
-        Matcher matcher = pattern.matcher(input);
-        return matcher.matches();
-    }
-
-    private boolean isPhoneNumber(String input) {
-        return input.matches("\\d{10}");
-    }
-
     private boolean userExists() {
         try(UserDao userDao = new UserDao(user)) {
             return userDao.isExistedUser();
@@ -114,14 +100,5 @@ public class Authentication {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private String hashPassword(String plainTextPassword) {
-        String salt = BCrypt.gensalt();
-        return BCrypt.hashpw(plainTextPassword, salt);
-    }
-
-    private boolean checkPassword(String plainTextPassword, String hashedPassword) {
-        return BCrypt.checkpw(plainTextPassword, hashedPassword);
     }
 }
