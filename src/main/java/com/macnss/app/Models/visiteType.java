@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class visiteType {
 
-	private java.lang.String visite_type;
+	private String visite_type;
 
 	private int taux_remboursement;
 

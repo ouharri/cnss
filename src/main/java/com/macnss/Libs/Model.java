@@ -1,7 +1,7 @@
-package com.macnss.libs;
+package com.macnss.Libs;
 
-import com.macnss.core.database;
-import com.macnss.interfaces.CRUD;
+import com.macnss.Core.database;
+import com.macnss.interfaces.Libs.CRUD;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class Model implements AutoCloseable, CRUD {
     protected String _table = null;
     protected String[] _primaryKey = {"id"};
     protected String _foreignKey = null;
-    protected Boolean _softDelete = true;
+    protected Boolean _softDelete = false;
     private boolean inTransaction = false;
 
     public Model(String tableName, String[] primaryKey) {
@@ -76,7 +76,7 @@ public class Model implements AutoCloseable, CRUD {
      *
      * @return A list of maps, where each map represents a row of data with column names as keys.
      */
-    public List<Map<String, String>> getAll() {
+    public List<Map<String, String>> retrieveAll() {
         List<Map<String, String>> resultList = new ArrayList<>();
         try {
             String query = "SELECT * FROM " + this._table;
@@ -518,7 +518,7 @@ public class Model implements AutoCloseable, CRUD {
             query += whereClause.toString();
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
 
-            java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(System.currentTimeMillis());
+            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
             preparedStatement.setTimestamp(1, currentTimestamp);
 
             for (int i = 0; i < ids.length; i++) {

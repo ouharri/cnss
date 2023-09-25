@@ -1,22 +1,25 @@
 package com.macnss.app.Services;
 
-import com.macnss.app.Enums.Gender;
-import com.macnss.app.Models.User;
-import com.macnss.dao.UserDao;
-import org.mindrot.jbcrypt.BCrypt;
+import com.macnss.app.Models.Administrator;
+import com.macnss.app.Models.AgentCNSS;
+import com.macnss.app.Models.Patient;
+import com.macnss.dao.AdministratorDao;
+import com.macnss.dao.VerificationAdministratorsCodesDao;
+import com.macnss.helpers.AuthenticationHelpers;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Optional;
 
 public class Authentication {
 
-    private final User user;
+    private final Administrator administrator = new Administrator();
+    private final AgentCNSS agentCNSS = new AgentCNSS();
+    private final Patient patient = new Patient();
+
 
     /**
      * Constructs a new AuthenticationController.
      */
     public Authentication() {
-        this.user = new User();
     }
 
     /**
@@ -32,51 +35,72 @@ public class Authentication {
      * @return The newly registered user.
      * @throws Exception             If a database error occurs during user registration.
      */
-    public User register( String cnie, String firstName, String lastName,String email, String password, Gender gender, String phone) throws Exception {
-
-        user.setUser(
-                cnie,
-                firstName,
-                lastName,
-                gender,
-                email,
-                phone,
-                this.hashPassword(password)
-        );
-
-        try(UserDao userDao = new UserDao(user)) {
-            if (userDao.isExistedUser()) {
-                throw new Exception("User already exists");
-            } else {
-                    return userDao.create();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
+//    public User register( String cnie, String firstName, String lastName,String email, String password, Gender gender, String phone) throws Exception {
+//
+//        user.setUser(
+//                cnie,
+//                firstName,
+//                lastName,
+//                gender,
+//                email,
+//                phone,
+//                hlp.hashPassword(password)
+//        );
+//
+//        try(UserDao userDao = new UserDao(user)) {
+//            if (userDao.isExistedUser()) {
+//                throw new Exception("User already exists");
+//            } else {
+//                    return userDao.create();
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw e;
+//        }
+//    }
 
     /**
-     * Authenticates a user.
+     * Pre Authenticates a Administrator.
      *
      * @param cnieOrEmailOrPhone The CNIE, email, or phone number used for authentication.
      * @param password           The user's password.
-     * @return `true` if authentication is successful, `false` otherwise.
+     * @return `code` if authentication is successful, `0` otherwise.
      */
-    public boolean PreAuthenticate(String cnieOrEmailOrPhone, String password) {
+    public boolean PreAdministratorAuthenticate(String cnieOrEmailOrPhone, String password) {
 
-        User user = getUserByCnieOrEmailOrPhone(cnieOrEmailOrPhone);
-
-        if (user != null) {
-            return this.checkPassword(password, user.getPassword());
+        try (AdministratorDao dao = new AdministratorDao()) {
+            Optional<Administrator> adm = dao.get(cnieOrEmailOrPhone);
+            if (adm.isPresent()) {
+                Administrator administrator = adm.get();
+                if (AuthenticationHelpers.checkPassword(password, administrator.getPassword())) {
+                    int code = AuthenticationHelpers.generateRandomCode(6);
+                    try (VerificationAdministratorsCodesDao dao2 = new VerificationAdministratorsCodesDao()) {
+                        if (dao2.create(administrator.getAdministrator_id(), code)) {
+                            new EmailService().send(administrator.getEmail(), "your code de verification", "Your code is : &" + code);
+                        } else {
+                            throw new RuntimeException("Error while creating verification code");
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         return false;
     }
 
-    public boolean Authenticate (String username,String password,String code) {
-
-        return true;
+    public boolean AdministratorAuthenticate(String code, String username, String password) {
+        try (VerificationAdministratorsCodesDao dao = new VerificationAdministratorsCodesDao()) {
+            return dao.isExistedCode(code, username, password);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -86,44 +110,20 @@ public class Authentication {
      * @return The user if found, or `null` if not found.
      * @throws RuntimeException If a database error occurs during the user retrieval.
      */
-    public User getUserByCnieOrEmailOrPhone(String cnieOrEmailOrPhone) {
-
-        try(UserDao userDao = new UserDao()){
-            return userDao.find(cnieOrEmailOrPhone);
+    private Administrator getUserByCnieOrEmail(String cnieOrEmailOrPhone) {
+        try (AdministratorDao dao = new AdministratorDao()) {
+            return dao.get(cnieOrEmailOrPhone).orElse(null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
-
-
-    private boolean isEmail(String input) {
-        String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$\n";
-        Pattern pattern = Pattern.compile(EMAIL_REGEX);
-        Matcher matcher = pattern.matcher(input);
-        return matcher.matches();
-    }
-
-    private boolean isPhoneNumber(String input) {
-        return input.matches("\\d{10}");
-    }
-
-    private boolean userExists() {
-        try(UserDao userDao = new UserDao(user)) {
-            return userDao.isExistedUser();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private String hashPassword(String plainTextPassword) {
-        String salt = BCrypt.gensalt();
-        return BCrypt.hashpw(plainTextPassword, salt);
-    }
-
-    private boolean checkPassword(String plainTextPassword, String hashedPassword) {
-        return BCrypt.checkpw(plainTextPassword, hashedPassword);
-    }
+//    private boolean userExists() {
+//        try(AdministratorDao dao = new AdministratorDao()){
+//            return dao.isExistedUser();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 }

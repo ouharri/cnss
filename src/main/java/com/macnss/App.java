@@ -1,6 +1,7 @@
 package com.macnss;
 
-import com.macnss.core.database;
+import com.macnss.Core.database;
+import com.macnss.app.Services.EmailService;
 import com.macnss.view.Authentication.Signing;
 
 import java.sql.Connection;

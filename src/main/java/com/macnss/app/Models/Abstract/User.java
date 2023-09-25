@@ -1,4 +1,4 @@
-package com.macnss.app.Models;
+package com.macnss.app.Models.Abstract;
 
 import com.macnss.app.Enums.Gender;
 import lombok.Data;
@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class User {
+public abstract class User {
 
     protected String cnie;
     protected String first_name;

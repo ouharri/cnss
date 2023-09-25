@@ -11,11 +11,12 @@ module com.biblio {
 
     requires lombok;
     requires java.sql;
-//    requires jBCrypt;
     requires org.postgresql.jdbc;
     requires java.desktop;
     requires jakarta.mail;
     requires jbcrypt;
+    requires cloudinary.http44;
+    requires cloudinary.core;
 
     opens com.macnss to javafx.fxml;
     exports com.macnss;

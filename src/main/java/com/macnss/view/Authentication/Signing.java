@@ -8,15 +8,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-
 public class Signing extends JFrame implements ActionListener {
 
     Authentication auth;
 
-    private JTextField username;
+    private JTextField username, code1, code2, code3, code4, code5, code6;
     private JPasswordField password;
-    private JButton loginButton, resetButton,forgetPasswordButton;
-    private JLabel usernameLabel, passwordLabel;
+    private JButton loginButton, resetButton, forgetPasswordButton, confirmButton, resendCode;
+    private JLabel usernameLabel, passwordLabel, codeLabel;
     private ImageIcon userIcon, passwordIcon;
     private Image logo;
 
@@ -24,7 +23,7 @@ public class Signing extends JFrame implements ActionListener {
         auth = new Authentication();
 
         setTitle("Signing");
-        setSize(600, 700);
+        setSize(560, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
@@ -44,25 +43,36 @@ public class Signing extends JFrame implements ActionListener {
         usernameLabel = new JLabel("Username :");
         passwordLabel = new JLabel("Password :");
 
+        codeLabel = new JLabel("Code Sending to your email :");
+        code1 = new JTextField();
+        code2 = new JTextField();
+        code3 = new JTextField();
+        code4 = new JTextField();
+        code5 = new JTextField();
+        code6 = new JTextField();
+        confirmButton = new JButton("Confirm");
+        resendCode = new JButton("Resend Code ?");
+
         JLabel logoLabel = new JLabel(new ImageIcon(logo));
-        logoLabel.setBounds(175, 10, 250, 250);
+        logoLabel.setBounds(155, 10, 250, 250);
 
-        usernameLabel.setBounds(60, 300, 470, 30);
+        usernameLabel.setBounds(40, 300, 470, 30);
         usernameLabel.setIcon(userIcon);
-        username.setBounds(60, 335, 460, 35);
+        username.setBounds(40, 335, 460, 35);
 
-        passwordLabel.setBounds(60, 390, 470, 30);
+        passwordLabel.setBounds(40, 390, 470, 30);
         passwordLabel.setIcon(passwordIcon);
-        password.setBounds(60, 425, 460, 35);
+        password.setBounds(40, 425, 460, 35);
 
-        loginButton.setBounds(60, 550, 175, 35);
+        loginButton.setBounds(45, 560, 170, 30);
         loginButton.setForeground(new Color(29, 170, 172));
-//        loginButton.setBorder(BorderFactory.createLineBorder(new Color(26, 71, 132), 2));
         loginButton.setFont(new Font("Arial", Font.PLAIN, 16));
         loginButton.setOpaque(true);
+        loginButton.setContentAreaFilled(false);
+        loginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
 
-        forgetPasswordButton.setBounds(360, 550, 300, 35);
+        forgetPasswordButton.setBounds(340, 560, 300, 35);
         forgetPasswordButton.setForeground(new Color(26, 71, 132));
         forgetPasswordButton.setFont(new Font("Arial", Font.PLAIN, 16));
         forgetPasswordButton.setBorderPainted(false);
@@ -70,12 +80,34 @@ public class Signing extends JFrame implements ActionListener {
         forgetPasswordButton.setContentAreaFilled(false);
         forgetPasswordButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        codeLabel.setBounds(70, 305, 470, 30);
+//        460
+        code1.setBounds(70, 350, 50, 50);
+        code2.setBounds(140, 350, 50, 50);
+        code3.setBounds(210, 350, 50, 50);
+        code4.setBounds(270, 350, 50, 50);
+        code5.setBounds(350, 350, 50, 50);
+        code6.setBounds(430, 350, 50, 50);
 
-        loginButton.setContentAreaFilled(false);
-        loginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        confirmButton.setBounds(70, 500, 170, 30);
+        confirmButton.setForeground(new Color(29, 170, 172));
+        confirmButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        confirmButton.setOpaque(true);
+        confirmButton.setContentAreaFilled(false);
+        confirmButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        resendCode.setBounds(340, 500, 300, 35);
+        resendCode.setForeground(new Color(26, 71, 132));
+        resendCode.setFont(new Font("Arial", Font.PLAIN, 16));
+        resendCode.setBorderPainted(false);
+        resendCode.setHorizontalAlignment(SwingConstants.LEFT);
+        resendCode.setContentAreaFilled(false);
+        resendCode.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         loginButton.addActionListener(this);
         resetButton.addActionListener(this);
+        forgetPasswordButton.addActionListener(this);
+        confirmButton.addActionListener(this);
 
         add(logoLabel);
         add(usernameLabel);
@@ -85,22 +117,56 @@ public class Signing extends JFrame implements ActionListener {
         add(loginButton);
         add(forgetPasswordButton);
 
+
         setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String enteredUsername = null;
+        String enteredPassword = null;
         if (e.getSource() == loginButton) {
-            String enteredUsername = username.getText();
-            String enteredPassword = new String(password.getPassword());
+            enteredUsername = username.getText();
+            enteredPassword = new String(password.getPassword());
 
-            if (auth.PreAuthenticate(enteredUsername, enteredPassword)) {
-                JOptionPane.showMessageDialog(this, "You are successfully logged in", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (auth.PreAdministratorAuthenticate(enteredUsername, enteredPassword)) {
 
-                dispose();
+                remove(usernameLabel);
+                remove(username);
+                remove(passwordLabel);
+                remove(password);
+                remove(loginButton);
+                remove(forgetPasswordButton);
+
+                add(codeLabel);
+                add(code1);
+                add(code2);
+                add(code3);
+                add(code4);
+                add(code5);
+                add(code6);
+                add(confirmButton);
+                add(resendCode);
+
+                revalidate();
+                repaint();
 
             } else {
                 JOptionPane.showMessageDialog(this, "Username or Password Incorrect", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (e.getSource() == forgetPasswordButton) {
+            JOptionPane.showMessageDialog(this, "Contact the administrator", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (e.getSource() == confirmButton) {
+            if (code1.getText().isEmpty() || code2.getText().isEmpty() || code3.getText().isEmpty() || code4.getText().isEmpty() || code5.getText().isEmpty() || code6.getText().isEmpty() || Integer.parseInt(code1.getText()) > 9 || Integer.parseInt(code2.getText()) > 9 || Integer.parseInt(code3.getText()) > 9 || Integer.parseInt(code4.getText()) > 9 || Integer.parseInt(code5.getText()) > 9 || Integer.parseInt(code6.getText()) > 9) {
+                JOptionPane.showMessageDialog(this, "Enter a Valide Code", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String code = code1.getText() + code2.getText() + code3.getText() + code4.getText() + code5.getText() + code6.getText();
+            if (auth.AdministratorAuthenticate(code, enteredUsername, enteredPassword)) {
+                JOptionPane.showMessageDialog(this, "Welcome", "Success", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Code Incorrect Or Expired !", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (e.getSource() == resetButton) {
             username.setText("");
