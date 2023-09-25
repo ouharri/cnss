@@ -19,6 +19,8 @@ public class Signing extends JFrame implements ActionListener {
     private ImageIcon userIcon, passwordIcon;
     private Image logo;
 
+    private String enteredUsername = null,enteredPassword = null;
+
     public Signing() {
         auth = new Authentication();
 
@@ -123,13 +125,11 @@ public class Signing extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String enteredUsername = null;
-        String enteredPassword = null;
         if (e.getSource() == loginButton) {
             enteredUsername = username.getText();
             enteredPassword = new String(password.getPassword());
 
-            if (auth.PreAdministratorAuthenticate(enteredUsername, enteredPassword)) {
+            if (auth.preAuthenticateAdministrator(enteredUsername, enteredPassword)) {
 
                 remove(usernameLabel);
                 remove(username);
@@ -162,7 +162,7 @@ public class Signing extends JFrame implements ActionListener {
                 return;
             }
             String code = code1.getText() + code2.getText() + code3.getText() + code4.getText() + code5.getText() + code6.getText();
-            if (auth.AdministratorAuthenticate(code, enteredUsername, enteredPassword)) {
+            if (auth.authenticateAdministrator(code, enteredUsername, enteredPassword)) {
                 JOptionPane.showMessageDialog(this, "Welcome", "Success", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
             } else {
