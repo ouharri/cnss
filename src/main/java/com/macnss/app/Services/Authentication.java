@@ -60,7 +60,7 @@ public class Authentication {
 //    }
 
     /**
-     * Authenticates a user.
+     * Pre Authenticates a Administrator.
      *
      * @param cnieOrEmailOrPhone The CNIE, email, or phone number used for authentication.
      * @param password           The user's password.
@@ -95,9 +95,9 @@ public class Authentication {
         return false;
     }
 
-    public boolean AdministratorAuthenticate(String code, double administrator_id, String password) {
+    public boolean AdministratorAuthenticate(String code, String username, String password) {
         try (VerificationAdministratorsCodesDao dao = new VerificationAdministratorsCodesDao()) {
-            return dao.isExistedCode(code, administrator_id, password);
+            return dao.isExistedCode(code, username, password);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

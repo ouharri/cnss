@@ -26,22 +26,24 @@ public class VerificationAdministratorsCodesDao extends Model {
         }
     }
 
-    public boolean isExistedCode(String code, double administrator_id, String password){
+    public boolean isExistedCode(String code, String username, String password){
         try {
             String query = "SELECT EXISTS (" +
                     "  SELECT 1 FROM verification_administrators_codes vac " +
                     "  INNER JOIN administrators ad " +
                     "  ON vac.administrator_id = ad.administrator_id " +
                     "  WHERE verification_code = ? " +
-                    "  AND vac.administrator_id = ? " +
+                    "  AND (ad.email = ? OR ad.cnie = ?)" +
                     "  AND ad.pwd_hash = ? " +
-                    "  AND CURRENT_TIMESTAMP - vac.code_generated_at < INTERVAL 5 MINUTE" +
+                    "  AND EXTRACT(SECOND FROM (CURRENT_TIMESTAMP - vac.code_generated_at)) < 300" +
+                    "  ORDER BY vac.code_generated_at DESC" +
                     ") AS result";
 
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
             preparedStatement.setString(1, code);
-            preparedStatement.setDouble(2, administrator_id);
-            preparedStatement.setString(3, password);
+            preparedStatement.setString(2, username);
+            preparedStatement.setString(3, username);
+            preparedStatement.setString(4, password);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
