@@ -11,30 +11,51 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Data Access Object (DAO) for managing Administrator entities.
+ */
 public class AdministratorDao extends Model implements Dao<Administrator> {
 
-    Administrator administrator = new Administrator();
+    private Administrator administrator = new Administrator();
 
+    /**
+     * Constructs a new AdministratorDao with default settings.
+     */
     public AdministratorDao() {
         super("administrators", new String[]{"administrator_id"});
     }
 
+    /**
+     * Constructs a new AdministratorDao with a specified Administrator entity.
+     *
+     * @param admin The Administrator entity to work with.
+     */
+    public AdministratorDao(Administrator admin) {
+        super("administrators", new String[]{"administrator_id"});
+        this.administrator = admin;
+    }
+
+    /**
+     * Reads an Administrator entity based on its unique identifier.
+     *
+     * @return The read Administrator entity or null if not found.
+     */
     @Override
     public Administrator read() {
-        Map<String, String> Admin = super.read(new String[]{String.valueOf(administrator.getAdministrator_id())});
+        Map<String, String> adminData = super.read(new String[]{String.valueOf(administrator.getAdministrator_id())});
 
-        if (Admin != null) {
+        if (adminData != null) {
             administrator.setUser(
-                    Admin.get("cnie"),
-                    Admin.get("first_name"),
-                    Admin.get("last_name"),
-                    Gender.valueOf(Admin.get("gender")),
-                    Admin.get("email"),
-                    Admin.get("phone"),
-                    Admin.get("password")
+                    adminData.get("cnie"),
+                    adminData.get("first_name"),
+                    adminData.get("last_name"),
+                    Gender.valueOf(adminData.get("gender")),
+                    adminData.get("email"),
+                    adminData.get("phone"),
+                    adminData.get("password")
             );
 
-            administrator.setAdministrator_id(Integer.parseInt(Admin.get("administrator_id")));
+            administrator.setAdministrator_id(Integer.parseInt(adminData.get("administrator_id")));
 
             return administrator;
         } else {
@@ -42,52 +63,12 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
         }
     }
 
-    @Override
-    public Optional<Administrator> get(String id) {
-        Map<String, String> Admin = super.read("email", id);
-
-        if (Admin == null) return Optional.empty();
-
-        administrator.setUser(
-                Admin.get("cnie"),
-                Admin.get("first_name"),
-                Admin.get("last_name"),
-                Gender.valueOf(Admin.get("gender")),
-                Admin.get("email"),
-                Admin.get("phone"),
-                Admin.get("pwd_hash")
-        );
-
-        administrator.setAdministrator_id(Integer.parseInt(Admin.get("administrator_id")));
-
-        return Optional.of(administrator);
-    }
-
-    public List<Administrator> getAll() {
-
-        List<Administrator> Administrators = new ArrayList<>();
-
-        List<Map<String, String>> Admins = super.retrieveAll();
-
-        Admins.forEach((admin) -> {
-            Administrator administrator = new Administrator();
-
-            administrator.setUser(
-                    admin.get("cnie"),
-                    admin.get("first_name"),
-                    admin.get("last_name"),
-                    Gender.valueOf(admin.get("gender")),
-                    admin.get("email"),
-                    admin.get("phone"),
-                    admin.get("password")
-            );
-            administrator.setAdministrator_id(Integer.parseInt(admin.get("administrator_id")));
-            Administrators.add(administrator);
-        });
-
-        return Administrators;
-    }
-
+    /**
+     * Saves the Administrator entity to the database.
+     *
+     * @return An optional containing the saved Administrator entity, or an empty optional if there's an error.
+     * @throws SQLException If an SQL error occurs during the save operation.
+     */
     @Override
     public Optional<Administrator> save() throws SQLException {
         if (super.create(administrator.getAdministrator()) == null) {
@@ -97,15 +78,87 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
         }
     }
 
+    /**
+     * Retrieves an Administrator entity by its email.
+     *
+     * @param email The email of the Administrator to retrieve.
+     * @return An optional containing the Administrator if found, or an empty optional if not found.
+     */
+    @Override
+    public Optional<Administrator> get(String email) {
+        Map<String, String> adminData = super.read("email", email);
+
+        if (adminData == null) {
+            return Optional.empty();
+        }
+
+        administrator.setUser(
+                adminData.get("cnie"),
+                adminData.get("first_name"),
+                adminData.get("last_name"),
+                Gender.valueOf(adminData.get("gender")),
+                adminData.get("email"),
+                adminData.get("phone"),
+                adminData.get("pwd_hash")
+        );
+
+        administrator.setAdministrator_id(Integer.parseInt(adminData.get("administrator_id")));
+
+        return Optional.of(administrator);
+    }
+
+    /**
+     * Retrieves all Administrator entities.
+     *
+     * @return A list of all Administrator entities.
+     */
+    public List<Administrator> getAll() {
+
+        List<Administrator> Administrators = new ArrayList<>();
+
+        List<Map<String, String>> Admins = super.retrieveAll();
+
+        Admins.forEach((adminData) -> {
+            Administrator administrator = new Administrator();
+
+            administrator.setUser(
+                    adminData.get("cnie"),
+                    adminData.get("first_name"),
+                    adminData.get("last_name"),
+                    Gender.valueOf(adminData.get("gender")),
+                    adminData.get("email"),
+                    adminData.get("phone"),
+                    adminData.get("password")
+            );
+            administrator.setAdministrator_id(Integer.parseInt(adminData.get("administrator_id")));
+            Administrators.add(administrator);
+        });
+
+        return Administrators;
+    }
+
+    /**
+     * Creates a new Administrator entity in the database.
+     *
+     * @param entity The Administrator entity to be created.
+     * @return An optional containing the created Administrator entity, or an empty optional if there's an error.
+     * @throws SQLException if a database error occurs during creation.
+     */
     @Override
     public Optional<Administrator> create(Administrator entity) throws SQLException {
         if (super.create(entity.getAdministrator()) == null) {
             return Optional.empty();
         } else {
-            return Optional.of(read());
+            return Optional.of(entity);
         }
     }
 
+    /**
+     * Updates an existing Administrator entity in the database.
+     *
+     * @param administrator The Administrator entity to be updated.
+     * @return An optional containing the updated Administrator entity, or an empty optional if there's an error.
+     */
     @Override
     public Optional<Administrator> update(Administrator administrator) {
         if (super.update(administrator.getAdministrator(), new String[]{String.valueOf(administrator.getAdministrator_id())})) {
@@ -115,25 +168,31 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
         }
     }
 
+    /**
+     * Finds all Administrator entities based on a search criteria.
+     *
+     * @param criteria The search criteria.
+     * @return A list of Administrator entities that match the criteria.
+     */
     @Override
     public List<Administrator> find(String criteria) {
         List<Administrator> Administrators = new ArrayList<>();
 
         List<Map<String, String>> Admins = super.readAll(new String[]{criteria});
 
-        Admins.forEach((admin) -> {
+        Admins.forEach((adminData) -> {
             Administrator administrator = new Administrator();
 
             administrator.setUser(
-                    admin.get("cnie"),
-                    admin.get("first_name"),
-                    admin.get("last_name"),
-                    Gender.valueOf(admin.get("gender")),
-                    admin.get("email"),
-                    admin.get("phone"),
-                    admin.get("password")
+                    adminData.get("cnie"),
+                    adminData.get("first_name"),
+                    adminData.get("last_name"),
+                    Gender.valueOf(adminData.get("gender")),
+                    adminData.get("email"),
+                    adminData.get("phone"),
+                    adminData.get("password")
             );
-            administrator.setAdministrator_id(Integer.parseInt(admin.get("administrator_id")));
+            administrator.setAdministrator_id(Integer.parseInt(adminData.get("administrator_id")));
 
             Administrators.add(administrator);
         });
@@ -141,9 +200,14 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
         return Administrators;
     }
 
+    /**
+     * Deletes an Administrator entity from the database.
+     *
+     * @param administrator The Administrator entity to be deleted.
+     * @return True if the deletion is successful, otherwise false.
+     */
     @Override
     public boolean delete(Administrator administrator) {
         return super.delete(new String[]{String.valueOf(administrator.getAdministrator_id())});
     }
-
 }

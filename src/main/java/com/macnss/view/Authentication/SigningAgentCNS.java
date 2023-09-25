@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-public class Signing extends JFrame implements ActionListener {
+public class SigningAgentCNS extends JFrame implements ActionListener {
 
     Authentication auth;
 
@@ -21,10 +21,10 @@ public class Signing extends JFrame implements ActionListener {
 
     private String enteredUsername = null,enteredPassword = null;
 
-    public Signing() {
+    public SigningAgentCNS() {
         auth = new Authentication();
 
-        setTitle("Signing");
+        setTitle("Signing Agent CNSS");
         setSize(560, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -83,7 +83,6 @@ public class Signing extends JFrame implements ActionListener {
         forgetPasswordButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         codeLabel.setBounds(70, 305, 470, 30);
-//        460
         code1.setBounds(70, 350, 50, 50);
         code2.setBounds(140, 350, 50, 50);
         code3.setBounds(210, 350, 50, 50);
@@ -129,7 +128,7 @@ public class Signing extends JFrame implements ActionListener {
             enteredUsername = username.getText();
             enteredPassword = new String(password.getPassword());
 
-            if (auth.preAuthenticateAdministrator(enteredUsername, enteredPassword)) {
+            if (auth.preAuthenticateAgentCNSS(enteredUsername, enteredPassword)) {
 
                 remove(usernameLabel);
                 remove(username);
@@ -162,7 +161,7 @@ public class Signing extends JFrame implements ActionListener {
                 return;
             }
             String code = code1.getText() + code2.getText() + code3.getText() + code4.getText() + code5.getText() + code6.getText();
-            if (auth.authenticateAdministrator(code, enteredUsername, enteredPassword)) {
+            if (auth.authenticateAgentCNSS(code, enteredUsername, enteredPassword)) {
                 JOptionPane.showMessageDialog(this, "Welcome", "Success", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
             } else {
@@ -176,7 +175,7 @@ public class Signing extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Signing().setVisible(true);
+            new SigningAgentCNS().setVisible(true);
         });
     }
 }

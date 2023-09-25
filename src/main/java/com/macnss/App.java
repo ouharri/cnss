@@ -1,8 +1,7 @@
 package com.macnss;
 
 import com.macnss.Core.database;
-import com.macnss.app.Services.EmailService;
-import com.macnss.view.Authentication.Signing;
+import com.macnss.view.Authentication.SigningAdministrator;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,7 +19,7 @@ public class App implements AutoCloseable{
     }
 
     public static void main(String[] args) throws Exception {
-        new Signing();
+        new SigningAdministrator();
     }
 
     @Override
