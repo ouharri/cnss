@@ -7,9 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public abstract class employee extends User {
 
-    private Timestamp email_verified_at = null;
+    protected Timestamp email_verified_at = null;
 
 }

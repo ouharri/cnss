@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
 public abstract class User {
 
     protected String cnie;

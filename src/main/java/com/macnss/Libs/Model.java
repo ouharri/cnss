@@ -18,7 +18,7 @@ public class Model implements AutoCloseable, CRUD {
     protected String _table = null;
     protected String[] _primaryKey = {"id"};
     protected String _foreignKey = null;
-    protected Boolean _softDelete = true;
+    protected Boolean _softDelete = false;
     private boolean inTransaction = false;
 
     public Model(String tableName, String[] primaryKey) {

@@ -14,7 +14,7 @@ public class database {
             synchronized (database.class) {
                 if (connection == null) {
                     try {
-                        Class.forName(env.get("DB_CLASS_NAME"));
+                        Class.forName(env.get("JDBC_DRIVER"));
                         String dbUrl = env.get("DB_URL");
                         String dbUsername = env.get("DB_USERNAME");
                         String dbPassword = env.get("DB_PASSWORD");

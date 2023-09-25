@@ -94,7 +94,7 @@ public class Signing extends JFrame implements ActionListener {
             String enteredUsername = username.getText();
             String enteredPassword = new String(password.getPassword());
 
-            if (auth.PreAuthenticate(enteredUsername, enteredPassword)) {
+            if (auth.PreAdministratorAuthenticate(enteredUsername, enteredPassword)) {
                 JOptionPane.showMessageDialog(this, "You are successfully logged in", "Success", JOptionPane.INFORMATION_MESSAGE);
 
                 dispose();

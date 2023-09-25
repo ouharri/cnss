@@ -15,32 +15,38 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
 
     Administrator administrator = new Administrator();
 
-    public AdministratorDao(String tableName, String[] primaryKey) {
-        super("Administrators", new String[]{"administrator_id"});
+    public AdministratorDao() {
+        super("administrators", new String[]{"administrator_id"});
     }
 
     @Override
     public Administrator read() {
         Map<String, String> Admin = super.read(new String[]{String.valueOf(administrator.getAdministrator_id())});
 
-        administrator.setUser(
-                Admin.get("cnie"),
-                Admin.get("first_name"),
-                Admin.get("last_name"),
-                Gender.valueOf(Admin.get("gender")),
-                Admin.get("email"),
-                Admin.get("phone"),
-                Admin.get("password")
-        );
+        if (Admin != null) {
+            administrator.setUser(
+                    Admin.get("cnie"),
+                    Admin.get("first_name"),
+                    Admin.get("last_name"),
+                    Gender.valueOf(Admin.get("gender")),
+                    Admin.get("email"),
+                    Admin.get("phone"),
+                    Admin.get("password")
+            );
 
-        administrator.setAdministrator_id(Admin.get("administrator_id"));
+            administrator.setAdministrator_id(Integer.parseInt(Admin.get("administrator_id")));
 
-        return administrator;
+            return administrator;
+        } else {
+            return null;
+        }
     }
 
     @Override
     public Optional<Administrator> get(String id) {
-        Map<String, String> Admin = super.read(new String[]{id});
+        Map<String, String> Admin = super.read("email", id);
+
+        if (Admin == null) return Optional.empty();
 
         administrator.setUser(
                 Admin.get("cnie"),
@@ -49,30 +55,12 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
                 Gender.valueOf(Admin.get("gender")),
                 Admin.get("email"),
                 Admin.get("phone"),
-                Admin.get("password")
+                Admin.get("pwd_hash")
         );
 
-        administrator.setAdministrator_id(Admin.get("administrator_id"));
+        administrator.setAdministrator_id(Integer.parseInt(Admin.get("administrator_id")));
 
         return Optional.of(administrator);
-    }
-
-    @Override
-    public Optional<Administrator> save() throws SQLException {
-        if (super.create(administrator.getAdministrator()) == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(read());
-        }
-    }
-
-    @Override
-    public Optional<Administrator> create(Administrator entity) throws SQLException {
-        if (super.create(entity.getAdministrator()) == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(read());
-        }
     }
 
     public List<Administrator> getAll() {
@@ -93,11 +81,29 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
                     admin.get("phone"),
                     admin.get("password")
             );
-            administrator.setAdministrator_id(admin.get("administrator_id"));
+            administrator.setAdministrator_id(Integer.parseInt(admin.get("administrator_id")));
             Administrators.add(administrator);
         });
 
         return Administrators;
+    }
+
+    @Override
+    public Optional<Administrator> save() throws SQLException {
+        if (super.create(administrator.getAdministrator()) == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(read());
+        }
+    }
+
+    @Override
+    public Optional<Administrator> create(Administrator entity) throws SQLException {
+        if (super.create(entity.getAdministrator()) == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(read());
+        }
     }
 
     @Override
@@ -127,7 +133,8 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
                     admin.get("phone"),
                     admin.get("password")
             );
-            administrator.setAdministrator_id(admin.get("administrator_id"));
+            administrator.setAdministrator_id(Integer.parseInt(admin.get("administrator_id")));
+
             Administrators.add(administrator);
         });
 

@@ -21,7 +21,6 @@ public class App implements AutoCloseable{
 
     public static void main(String[] args) throws Exception {
         new Signing();
-        new EmailService().send("ouharri.outman@gmail.com", "sba7 l5eer","test");
     }
 
     @Override
