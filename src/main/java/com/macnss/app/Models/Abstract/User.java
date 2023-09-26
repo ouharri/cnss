@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,9 @@ import java.util.Map;
 public abstract class User {
 
     protected String cnie;
-    protected String first_name;
-    protected String last_name;
+    protected String firstName;
+    protected String lastName;
+    protected Date birthday;
     protected String email;
     protected String phone;
     protected Gender gender;
@@ -26,8 +28,9 @@ public abstract class User {
         Map<String, String> UserData = new HashMap<>();
 
         UserData.put("cnie", this.cnie);
-        UserData.put("first_name", this.first_name);
-        UserData.put("last_name", this.last_name);
+        UserData.put("first_name", this.firstName);
+        UserData.put("last_name", this.lastName);
+        UserData.put("birthday", String.valueOf(this.birthday));
         UserData.put("email", this.email);
         UserData.put("phone", this.phone);
         UserData.put("gender", this.gender.toString());
@@ -35,10 +38,11 @@ public abstract class User {
         return UserData;
     }
 
-    public void setUser(String cnie, String firstName, String lastName, Gender gender, String email, String phone, String password) {
+    public void setUser(String cnie, String firstName, String lastName, Date birthday, Gender gender, String email, String phone, String password) {
         this.cnie = cnie;
-        this.first_name = firstName;
-        this.last_name = lastName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
         this.gender = Gender.valueOf(String.valueOf(gender));
         this.email = email;
         this.phone = phone;
@@ -47,11 +51,11 @@ public abstract class User {
 
     public void setUser(String cnie, String firstName, String lastName) {
         this.cnie = cnie;
-        this.first_name = firstName;
-        this.last_name = lastName;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public String getFullName() {
-        return this.first_name + " " + this.last_name;
+        return this.firstName + " " + this.lastName;
     }
 }

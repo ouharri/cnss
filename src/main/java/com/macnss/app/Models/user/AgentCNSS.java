@@ -1,4 +1,4 @@
-package com.macnss.app.Models;
+package com.macnss.app.Models.user;
 
 import com.macnss.app.Models.Abstract.employee;
 import lombok.Data;
@@ -18,8 +18,8 @@ public class AgentCNSS extends employee {
 
         agents.put("administrator_id", String.valueOf(this.agent_cns_id));
         agents.put("cnie", this.cnie);
-        agents.put("first_name", this.first_name);
-        agents.put("last_name", this.last_name);
+        agents.put("first_name", this.firstName);
+        agents.put("last_name", this.lastName);
         agents.put("email", this.email);
         agents.put("phone", this.phone);
         agents.put("gender", this.gender.toString());

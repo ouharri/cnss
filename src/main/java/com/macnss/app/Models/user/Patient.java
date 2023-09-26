@@ -1,12 +1,13 @@
-package com.macnss.app.Models;
+package com.macnss.app.Models.user;
 
-import com.macnss.app.Enums.FileStatus;
 import com.macnss.app.Models.Abstract.Document;
 import com.macnss.app.Models.Abstract.User;
+import com.macnss.app.Models.Refund.RefundFile;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -25,8 +26,8 @@ public class Patient extends User {
 
         patient.put("administrator_id", String.valueOf(this.matriculate));
         patient.put("cnie", this.cnie);
-        patient.put("first_name", this.first_name);
-        patient.put("last_name", this.last_name);
+        patient.put("first_name", this.firstName);
+        patient.put("last_name", this.lastName);
         patient.put("email", this.email);
         patient.put("phone", this.phone);
         patient.put("gender", this.gender.toString());

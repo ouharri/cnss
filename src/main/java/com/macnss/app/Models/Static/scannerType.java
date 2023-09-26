@@ -1,4 +1,4 @@
-package com.macnss.app.Models;
+package com.macnss.app.Models.Static;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,8 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class scannerType {
 
-	private String scanner_type;
-
-	private int taux_remboursement;
+	private String scannerType;
+	private int reimbursementRate;
 
 }

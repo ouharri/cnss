@@ -1,4 +1,4 @@
-package com.macnss.app.Models;
+package com.macnss.app.Models.Refund;
 
 import java.sql.Timestamp;
 

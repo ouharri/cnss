@@ -1,11 +1,14 @@
 package com.macnss.view.Authentication;
 
 import com.macnss.app.Services.Authentication;
+import com.macnss.dao.AgentCNSSDao;
+import com.macnss.view.Agent.index;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 
 public class SigningAgentCNS extends JFrame implements ActionListener {
@@ -24,7 +27,7 @@ public class SigningAgentCNS extends JFrame implements ActionListener {
     public SigningAgentCNS() {
         auth = new Authentication();
 
-        setTitle("Signing Agent CNSS");
+        setTitle("Signing Administrator CNSS");
         setSize(560, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -36,6 +39,8 @@ public class SigningAgentCNS extends JFrame implements ActionListener {
 
         ImageIcon logoIcon = new ImageIcon("assets/images/app/cnss.png");
         Image logo = logoIcon.getImage();
+
+        setIconImage(logo);
 
         username = new JTextField();
         password = new JPasswordField();
@@ -56,15 +61,15 @@ public class SigningAgentCNS extends JFrame implements ActionListener {
         resendCode = new JButton("Resend Code ?");
 
         JLabel logoLabel = new JLabel(new ImageIcon(logo));
-        logoLabel.setBounds(155, 10, 250, 250);
+        logoLabel.setBounds(130, 40,300 , 282);
 
-        usernameLabel.setBounds(40, 300, 470, 30);
+        usernameLabel.setBounds(40, 340, 470, 30);
         usernameLabel.setIcon(userIcon);
-        username.setBounds(40, 335, 460, 35);
+        username.setBounds(40, 375, 460, 35);
 
-        passwordLabel.setBounds(40, 390, 470, 30);
+        passwordLabel.setBounds(40, 430, 470, 30);
         passwordLabel.setIcon(passwordIcon);
-        password.setBounds(40, 425, 460, 35);
+        password.setBounds(40, 475, 460, 35);
 
         loginButton.setBounds(45, 560, 170, 30);
         loginButton.setForeground(new Color(29, 170, 172));
@@ -82,22 +87,22 @@ public class SigningAgentCNS extends JFrame implements ActionListener {
         forgetPasswordButton.setContentAreaFilled(false);
         forgetPasswordButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        codeLabel.setBounds(70, 305, 470, 30);
-        code1.setBounds(70, 350, 50, 50);
-        code2.setBounds(140, 350, 50, 50);
-        code3.setBounds(210, 350, 50, 50);
-        code4.setBounds(270, 350, 50, 50);
-        code5.setBounds(350, 350, 50, 50);
-        code6.setBounds(430, 350, 50, 50);
+        codeLabel.setBounds(70, 355, 470, 30);
+        code1.setBounds(70, 400, 50, 50);
+        code2.setBounds(140, 400, 50, 50);
+        code3.setBounds(210, 400, 50, 50);
+        code4.setBounds(280, 400, 50, 50);
+        code5.setBounds(350, 400, 50, 50);
+        code6.setBounds(430, 400, 50, 50);
 
-        confirmButton.setBounds(70, 500, 170, 30);
+        confirmButton.setBounds(70, 520, 170, 30);
         confirmButton.setForeground(new Color(29, 170, 172));
         confirmButton.setFont(new Font("Arial", Font.PLAIN, 16));
         confirmButton.setOpaque(true);
         confirmButton.setContentAreaFilled(false);
         confirmButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        resendCode.setBounds(340, 500, 300, 35);
+        resendCode.setBounds(340, 520, 300, 35);
         resendCode.setForeground(new Color(26, 71, 132));
         resendCode.setFont(new Font("Arial", Font.PLAIN, 16));
         resendCode.setBorderPainted(false);
@@ -162,7 +167,18 @@ public class SigningAgentCNS extends JFrame implements ActionListener {
             }
             String code = code1.getText() + code2.getText() + code3.getText() + code4.getText() + code5.getText() + code6.getText();
             if (auth.authenticateAgentCNSS(code, enteredUsername, enteredPassword)) {
-                JOptionPane.showMessageDialog(this, "Welcome", "Success", JOptionPane.INFORMATION_MESSAGE);
+                try (AgentCNSSDao agent = new AgentCNSSDao()) {
+                    agent.get(enteredUsername).ifPresent(agentCNSS -> {
+                        JOptionPane.showMessageDialog(this, "Welcome " + agentCNSS.getFullName(), "Success", JOptionPane.INFORMATION_MESSAGE);
+                        try {
+                            new index(agentCNSS);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                }catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Code Incorrect Or Expired !", "Error", JOptionPane.ERROR_MESSAGE);

@@ -1,7 +1,7 @@
 package com.macnss.dao;
 
 import com.macnss.Libs.Model;
-import com.macnss.app.Models.Medicine;
+import com.macnss.app.Models.Static.Medicine;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

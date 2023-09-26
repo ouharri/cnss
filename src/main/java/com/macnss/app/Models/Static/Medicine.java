@@ -1,4 +1,4 @@
-package com.macnss.app.Models;
+package com.macnss.app.Models.Static;
 
 
 import lombok.Data;

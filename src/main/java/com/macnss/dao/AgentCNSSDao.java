@@ -2,9 +2,10 @@ package com.macnss.dao;
 
 import com.macnss.Libs.Model;
 import com.macnss.app.Enums.Gender;
-import com.macnss.app.Models.AgentCNSS;
+import com.macnss.app.Models.user.AgentCNSS;
 import com.macnss.interfaces.Dao.Dao;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
                     agentData.get("cnie"),
                     agentData.get("first_name"),
                     agentData.get("last_name"),
+                    Date.valueOf(agentData.get("birthday")),
                     Gender.valueOf(agentData.get("gender")),
                     agentData.get("email"),
                     agentData.get("phone"),
@@ -86,6 +88,7 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
                 agentData.get("cnie"),
                 agentData.get("first_name"),
                 agentData.get("last_name"),
+                Date.valueOf(agentData.get("birthday")),
                 Gender.valueOf(agentData.get("gender")),
                 agentData.get("email"),
                 agentData.get("phone"),
@@ -116,6 +119,7 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
                     agentData.get("cnie"),
                     agentData.get("first_name"),
                     agentData.get("last_name"),
+                    Date.valueOf(agentData.get("birthday")),
                     Gender.valueOf(agentData.get("gender")),
                     agentData.get("email"),
                     agentData.get("phone"),
@@ -181,6 +185,7 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
                     agentData.get("cnie"),
                     agentData.get("first_name"),
                     agentData.get("last_name"),
+                    Date.valueOf(agentData.get("birthday")),
                     Gender.valueOf(agentData.get("gender")),
                     agentData.get("email"),
                     agentData.get("phone"),

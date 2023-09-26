@@ -1,4 +1,4 @@
-package com.macnss.app.Models;
+package com.macnss.app.Models.user;
 
 import com.macnss.app.Models.Abstract.employee;
 import lombok.Data;
@@ -18,8 +18,8 @@ public class Administrator extends employee {
 
         administrator.put("administrator_id", String.valueOf(this.administrator_id));
         administrator.put("cnie", this.cnie);
-        administrator.put("first_name", this.first_name);
-        administrator.put("last_name", this.last_name);
+        administrator.put("first_name", this.firstName);
+        administrator.put("last_name", this.lastName);
         administrator.put("email", this.email);
         administrator.put("phone", this.phone);
         administrator.put("gender", this.gender.toString());

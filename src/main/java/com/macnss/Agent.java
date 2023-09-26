@@ -1,16 +1,16 @@
 package com.macnss;
 
 import com.macnss.Core.database;
-import com.macnss.view.Authentication.SigningAdministrator;
+import com.macnss.view.Authentication.SigningAgentCNS;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class App implements AutoCloseable{
+public class Agent implements AutoCloseable{
 
     private Connection connection = null;
 
-    public App() {
+    public Agent() {
         try {
             this.connection = database.getConnection();
         } catch (Exception e) {
@@ -18,8 +18,8 @@ public class App implements AutoCloseable{
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        new SigningAdministrator();
+    public static void main(String[] args) {
+        new SigningAgentCNS();
     }
 
     @Override

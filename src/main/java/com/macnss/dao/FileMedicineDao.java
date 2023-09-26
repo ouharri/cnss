@@ -22,13 +22,13 @@ public class FileMedicineDao extends Model {
      * @return An optional containing the created FileMedicine entity, or an empty optional if there's an error.
      * @throws SQLException if a database error occurs during creation.
      */
-//    public Optional<FileMedicine> create(FileMedicine entity) throws SQLException {
-//        if (super.create(entity.getFileMedicine()) == null) {
-//            return Optional.empty();
-//        } else {
-//            return Optional.of(entity);
-//        }
-//    }
+    public Optional<FileMedicine> create(FileMedicine entity) throws SQLException {
+        if (super.create(entity.getFileMedicine()) == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(entity);
+        }
+    }
 
     // Ajoutez ici d'autres méthodes spécifiques si nécessaire
 }

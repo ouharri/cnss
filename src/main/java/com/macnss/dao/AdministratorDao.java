@@ -2,9 +2,10 @@ package com.macnss.dao;
 
 import com.macnss.Libs.Model;
 import com.macnss.app.Enums.Gender;
-import com.macnss.app.Models.Administrator;
+import com.macnss.app.Models.user.Administrator;
 import com.macnss.interfaces.Dao.Dao;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
                     adminData.get("cnie"),
                     adminData.get("first_name"),
                     adminData.get("last_name"),
+                    Date.valueOf(adminData.get("birthday")),
                     Gender.valueOf(adminData.get("gender")),
                     adminData.get("email"),
                     adminData.get("phone"),
@@ -96,6 +98,7 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
                 adminData.get("cnie"),
                 adminData.get("first_name"),
                 adminData.get("last_name"),
+                Date.valueOf(adminData.get("birthday")),
                 Gender.valueOf(adminData.get("gender")),
                 adminData.get("email"),
                 adminData.get("phone"),
@@ -125,6 +128,7 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
                     adminData.get("cnie"),
                     adminData.get("first_name"),
                     adminData.get("last_name"),
+                    Date.valueOf(adminData.get("birthday")),
                     Gender.valueOf(adminData.get("gender")),
                     adminData.get("email"),
                     adminData.get("phone"),
@@ -187,6 +191,7 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
                     adminData.get("cnie"),
                     adminData.get("first_name"),
                     adminData.get("last_name"),
+                    Date.valueOf(adminData.get("birthday")),
                     Gender.valueOf(adminData.get("gender")),
                     adminData.get("email"),
                     adminData.get("phone"),

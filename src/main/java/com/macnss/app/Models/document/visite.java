@@ -1,4 +1,4 @@
-package com.macnss.app.Models;
+package com.macnss.app.Models.document;
 
 import com.macnss.app.Models.Abstract.Document;
 import lombok.Data;
