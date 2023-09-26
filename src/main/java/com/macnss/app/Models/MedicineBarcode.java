@@ -5,6 +5,6 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Files_medcines {
+public class MedicineBarcode {
 
 }
