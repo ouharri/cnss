@@ -32,13 +32,11 @@ public class index extends JFrame implements ActionListener {
     private JLabel book_label;
     private DefaultTableModel tableModel;
     private JTextField medecine_btn_field;
-
     private addAgentDialog addAgentDialog;
-
     String CurrentBookClicked = null;
     int CurrentAgentClickedRow = -1;
-
     private EditBookDialog editBookDialog;
+
 
     public index(Administrator u) throws SQLException {
 
@@ -337,7 +335,7 @@ public class index extends JFrame implements ActionListener {
                     String phone = edition_field.getText();
                     AgentStatus status = AgentStatus.valueOf(Objects.requireNonNull(status_field.getSelectedItem()).toString());
                     Gender gender = Gender.valueOf(Objects.requireNonNull(gender_field.getSelectedItem()).toString());
-                    java.sql.Date selectedDate = new java.sql.Date( birthday_field.getDate().getTime());
+                    java.sql.Date selectedDate = new java.sql.Date(birthday_field.getDate().getTime());
 
                     if (cnie.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phone.isEmpty() || status == null || selectedDate == null) {
                         JOptionPane.showMessageDialog(null, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
@@ -356,17 +354,17 @@ public class index extends JFrame implements ActionListener {
                             gender,
                             email,
                             phone,
-                            password
+                            AuthenticationHelpers.hashPassword(password)
                     );
                     newAgent.setStatus(status);
 
-                    try(AgentCNSSDao dao = new AgentCNSSDao(newAgent)){
-                        if(dao.save().isPresent()){
+                    try (AgentCNSSDao dao = new AgentCNSSDao(newAgent)) {
+                        if (dao.save().isPresent()) {
                             EmailService emailService = new EmailService(email, "Authentication Password MaCNSS");
                             Thread emailThread = new Thread(emailService);
                             emailService.setText("Your Password : " + password + "\n" + "Please change your password after login.");
                             emailThread.start();
-                            JOptionPane.showMessageDialog(null, "Agent added successfully, here password is sent to \" " + email + "\" ","Success", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Agent added successfully, here password is sent to \" " + email + "\" ", "Success", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);

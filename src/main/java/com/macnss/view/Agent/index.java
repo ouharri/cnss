@@ -3,6 +3,7 @@ package com.macnss.view.Agent;
 import com.macnss.app.Models.user.Administrator;
 import com.macnss.app.Models.user.AgentCNSS;
 import com.macnss.view.Authentication.SigningAdministrator;
+import com.macnss.view.Authentication.SigningAgentCNS;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -17,16 +18,13 @@ import java.util.stream.Collectors;
 public class index extends JFrame implements ActionListener {
 
     private Administrator Admin;
-    private JButton statistic, all_book, search, available_book, brr_book, lost_book, user, awaiting_list, logout;
-    private JButton add_book_button, edit_book_button, delete_book_button, search_book_button;
-    private JTable bookTable;
+    private final JButton agent_btn, patient_btn, medecine_btn, analyse_btn, radio_btn, visit_btn, scanner_btn, logout_btn;
+    private JButton add_agent_button, setting_agent_button, delete_book_button, medecine_btn_book_button;
+    private JTable agentTable;
     private JScrollPane scrollPane;
     private JLabel book_label;
     private DefaultTableModel tableModel;
-    private JTextField search_field;
-
-    String CurrentBookClicked = null;
-    int CurrentBookClickedRow = -1;
+    private JTextField medecine_btn_field;
 
     public index(AgentCNSS u) throws SQLException {
 
@@ -44,142 +42,145 @@ public class index extends JFrame implements ActionListener {
         ImageIcon logoIcon = new ImageIcon("assets/images/app/user.png");
         Image UserLogo = logoIcon.getImage();
 
-        ImageIcon Statistic_icon = new ImageIcon("assets/icon/statistics.png");
-        ImageIcon Book_icon = new ImageIcon("assets/icon/book.png");
-        ImageIcon Search_icon = new ImageIcon("assets/icon/search.png");
-        ImageIcon Available_icon = new ImageIcon("assets/icon/available.png");
-        ImageIcon Borrowed_icon = new ImageIcon("assets/icon/borrow.png");
-        ImageIcon Lost_icon = new ImageIcon("assets/icon/lost.png");
-        ImageIcon Users_icon = new ImageIcon("assets/icon/user.png");
-        ImageIcon Awaiting_icon = new ImageIcon("assets/icon/waiting.png");
+        ImageIcon Agent_icon = new ImageIcon("assets/icon/agent.png");
+        ImageIcon Patient_icon = new ImageIcon("assets/icon/patient.png");
+        ImageIcon Medecine_icon = new ImageIcon("assets/icon/medicine.png");
+        ImageIcon Laboratory_icon = new ImageIcon("assets/icon/laboratory.png");
+        ImageIcon Radio_icon = new ImageIcon("assets/icon/radio.png");
+        ImageIcon Scanner_icon = new ImageIcon("assets/icon/scanner.png");
+        ImageIcon Visit_icon = new ImageIcon("assets/icon/visit.png");
         ImageIcon Logout_icon = new ImageIcon("assets/icon/logout.png");
 
-        statistic = new JButton("  Statistic", Statistic_icon);
-        all_book = new JButton("  All books", Book_icon);
-        search = new JButton(" Search", Search_icon);
-        available_book = new JButton("  Available books", Available_icon);
-        brr_book = new JButton("  Borrowed books", Borrowed_icon);
-        lost_book = new JButton("  Lost books", Lost_icon);
-        user = new JButton("  Users", Users_icon);
-        awaiting_list = new JButton("  Awaiting list", Awaiting_icon);
-        logout = new JButton("  Logout", Logout_icon);
+        agent_btn = new JButton("  Agent", Agent_icon);
+        patient_btn = new JButton("  Patient", Patient_icon);
+        medecine_btn = new JButton("  Medecine", Medecine_icon);
+        analyse_btn = new JButton("  Analyse", Laboratory_icon);
+        radio_btn = new JButton(" Radio", Radio_icon);
+        visit_btn = new JButton("  Visit", Visit_icon);
+        scanner_btn = new JButton("  Scanner", Scanner_icon);
+        logout_btn = new JButton("  Logout", Logout_icon);
 
-        setButtons(statistic);
-        setButtons(all_book);
-        setButtons(search);
-        setButtons(available_book);
-        setButtons(brr_book);
-        setButtons(lost_book);
-        setButtons(user);
-        setButtons(awaiting_list);
-        setButtons(logout);
+        setButtons(agent_btn);
+        setButtons(patient_btn);
+        setButtons(medecine_btn);
+        setButtons(analyse_btn);
+        setButtons(radio_btn);
+        setButtons(visit_btn);
+        setButtons(scanner_btn);
+        setButtons(logout_btn);
 
-        int y = 120;
+        int y = 150;
         int y2 = 10;
 
         JLabel logoLabel = new JLabel(new ImageIcon(UserLogo));
-        logoLabel.setBounds(50, 50 + y2, 64, 64);
+        logoLabel.setBounds(50, 60, 64, 64);
 
         ImageIcon AppLogoIcon = new ImageIcon("assets/images/app/app.png");
         Image logo = AppLogoIcon.getImage();
 
+        ImageIcon AppBackgroundIcon = new ImageIcon("assets/images/app/background.png");
+        Image background = AppBackgroundIcon.getImage();
+
         setIconImage(logo);
 
         JLabel AppLogoLabel = new JLabel(new ImageIcon(logo));
-        AppLogoLabel.setBounds((screenWidth - 180), screenHeight - 200, 150, 139);
+        AppLogoLabel.setBounds(screenWidth - 120, screenHeight - 140, 100, 92);
 
+        JLabel AppBackgroundBaLabel = new JLabel(new ImageIcon(background));
+        AppBackgroundBaLabel.setBounds((screenWidth - 230) / 2, (screenHeight - 229) / 2, 414, 229);
+
+        String user_roles = "ADMIN";
+        JLabel user_role = new JLabel(user_roles);
+        user_role.setFont(new Font("Arial", Font.ITALIC, 10));
+        user_role.setBounds(65, 130, 300, 15);
 
         JLabel user_name = new JLabel(u.getFullName());
         user_name.setFont(new Font("Arial", Font.PLAIN, 25));
         user_name.setBounds(127, 70 + y2, 200, 17);
 
-
         JLabel user_contact = new JLabel((u.getEmail() != null ? u.getEmail() : u.getPhone() != null ? u.getPhone() : u.getCnie()));
         user_contact.setFont(new Font("Arial", Font.PLAIN, 13));
         user_contact.setBounds(127, 90 + y2, 300, 15);
 
-        String user_roles = "Agent CNSS";
-        JLabel user_role = new JLabel(user_roles);
-        user_role.setFont(new Font("Arial", Font.ITALIC, 10));
-        user_role.setBounds(54, 130, 300, 15);
+        agent_btn.setBounds(50, 100 + y, 250, 30);
+        patient_btn.setBounds(50, 155 + y, 250, 30);
+        medecine_btn.setBounds(50, 210 + y, 200, 30);
+        analyse_btn.setBounds(50, 265 + y, 250, 30);
+        radio_btn.setBounds(50, 320 + y, 250, 30);
+        visit_btn.setBounds(50, 375 + y, 250, 30);
+        scanner_btn.setBounds(50, 430 + y, 250, 30);
+        logout_btn.setBounds(50, 485 + y, 250, 30);
 
-        statistic.setBounds(50, 100 + y, 250, 30);
-        all_book.setBounds(50, 155 + y, 250, 30);
-        search.setBounds(50, 210 + y, 200, 30);
-        available_book.setBounds(50, 265 + y, 250, 30);
-        brr_book.setBounds(50, 320 + y, 250, 30);
-        lost_book.setBounds(50, 375 + y, 250, 30);
-        user.setBounds(50, 430 + y, 250, 30);
-        awaiting_list.setBounds(50, 485 + y, 250, 30);
-        logout.setBounds(50, 540 + y, 250, 30);
-
-        statistic.addActionListener(this);
-        search.addActionListener(this);
-        all_book.addActionListener(this);
-        available_book.addActionListener(this);
-        brr_book.addActionListener(this);
-        lost_book.addActionListener(this);
-        user.addActionListener(this);
-        awaiting_list.addActionListener(this);
-        logout.addActionListener(this);
+        agent_btn.addActionListener(this);
+        medecine_btn.addActionListener(this);
+        patient_btn.addActionListener(this);
+        analyse_btn.addActionListener(this);
+        radio_btn.addActionListener(this);
+        visit_btn.addActionListener(this);
+        scanner_btn.addActionListener(this);
+        logout_btn.addActionListener(this);
 
         add(user_name);
         add(user_contact);
         add(user_role);
+        add(AppLogoLabel);
+
 
         add(logoLabel);
-        add(statistic);
-        add(all_book);
-        add(search);
-        add(available_book);
-        add(brr_book);
-        add(lost_book);
-        add(user);
-        add(awaiting_list);
-        add(logout);
+        add(agent_btn);
+        add(patient_btn);
+        add(medecine_btn);
+        add(analyse_btn);
+        add(radio_btn);
+        add(visit_btn);
+        add(scanner_btn);
+        add(logout_btn);
+
+        add(AppBackgroundBaLabel);
         setVisible(true);
+
     }
 
 
     private void refresh() {
         if (book_label != null) remove(book_label);
-        if (add_book_button != null) remove(add_book_button);
-        if (edit_book_button != null) remove(edit_book_button);
+        if (add_agent_button != null) remove(add_agent_button);
+        if (setting_agent_button != null) remove(setting_agent_button);
         if (delete_book_button != null) remove(delete_book_button);
         if (scrollPane != null) remove(scrollPane);
-
-        if (search_field != null) remove(search_field);
-        if (search_book_button != null) remove(search_book_button);
-
-
+        if (medecine_btn_field != null) remove(medecine_btn_field);
+        if (medecine_btn_book_button != null) remove(medecine_btn_book_button);
+        if (agentTable != null) agentTable = null;
+        if (tableModel != null) tableModel = null;
         revalidate();
         repaint();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == statistic) {
+        if (e.getSource() == agent_btn) {
             refresh();
-        } else if (e.getSource() == all_book) {
+
+        } else if (e.getSource() == patient_btn) {
             refresh();
-        } else if (e.getSource() == search) {
+        } else if (e.getSource() == medecine_btn) {
             refresh();
-        } else if (e.getSource() == available_book) {
+
+
+        } else if (e.getSource() == analyse_btn) {
             refresh();
-        } else if (e.getSource() == brr_book) {
+        } else if (e.getSource() == radio_btn) {
             refresh();
-        } else if (e.getSource() == lost_book) {
+        } else if (e.getSource() == visit_btn) {
             refresh();
-        } else if (e.getSource() == user) {
+        } else if (e.getSource() == scanner_btn) {
             refresh();
-        } else if (e.getSource() == awaiting_list) {
-            refresh();
-        } else if (e.getSource() == logout) {
+        } else if (e.getSource() == logout_btn) {
             int choice = JOptionPane.showConfirmDialog(this, "Are you sure you want to log out?", "Logout Confirmation", JOptionPane.YES_NO_OPTION);
 
             if (choice == JOptionPane.YES_OPTION) {
                 dispose();
-                new SigningAdministrator();
+                new SigningAgentCNS();
             }
         }
     }
