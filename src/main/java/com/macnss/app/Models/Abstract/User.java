@@ -1,5 +1,6 @@
 package com.macnss.app.Models.Abstract;
 
+import com.macnss.app.Enums.AgentStatus;
 import com.macnss.app.Enums.Gender;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,29 +17,31 @@ public abstract class User {
     protected String cnie;
     protected String firstName;
     protected String lastName;
-    protected Date birthday;
     protected String email;
+    protected Date birthday;
     protected String phone;
     protected Gender gender;
     protected String password;
     protected java.sql.Timestamp delete_at = null;
 
-    public Map<String, String> getUser() {
+    public Map<String, Object> getUser() {
 
-        Map<String, String> UserData = new HashMap<>();
+        Map<String, Object> UserData = new HashMap<>();
 
         UserData.put("cnie", this.cnie);
         UserData.put("first_name", this.firstName);
         UserData.put("last_name", this.lastName);
-        UserData.put("birthday", String.valueOf(this.birthday));
+        UserData.put("birthday", this.birthday);
         UserData.put("email", this.email);
         UserData.put("phone", this.phone);
-        UserData.put("gender", this.gender.toString());
+        UserData.put("gender", this.gender);
         UserData.put("password", this.password);
+
         return UserData;
     }
 
-    public void setUser(String cnie, String firstName, String lastName, Date birthday, Gender gender, String email, String phone, String password) {
+    public void
+    setUser(String cnie, String firstName, String lastName, Date birthday, Gender gender, String email, String phone, String password) {
         this.cnie = cnie;
         this.firstName = firstName;
         this.lastName = lastName;

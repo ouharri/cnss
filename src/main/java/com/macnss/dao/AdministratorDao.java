@@ -43,21 +43,21 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
      */
     @Override
     public Administrator read() {
-        Map<String, String> adminData = super.read(new String[]{String.valueOf(administrator.getAdministrator_id())});
+        Map<String, Object> adminData = super.read(new String[]{String.valueOf(administrator.getAdministrator_id())});
 
         if (adminData != null) {
             administrator.setUser(
-                    adminData.get("cnie"),
-                    adminData.get("first_name"),
-                    adminData.get("last_name"),
-                    Date.valueOf(adminData.get("birthday")),
-                    Gender.valueOf(adminData.get("gender")),
-                    adminData.get("email"),
-                    adminData.get("phone"),
-                    adminData.get("password")
+                    (String) adminData.get("cnie"),
+                    (String) adminData.get("first_name"),
+                    (String) adminData.get("last_name"),
+                    (Date) adminData.get("birthday"),
+                    Gender.valueOf((String) adminData.get("gender")),
+                    (String) adminData.get("email"),
+                    (String) adminData.get("phone"),
+                    (String) adminData.get("password")
             );
 
-            administrator.setAdministrator_id(Integer.parseInt(adminData.get("administrator_id")));
+            administrator.setAdministrator_id(Integer.parseInt((String) adminData.get("administrator_id")));
 
             return administrator;
         } else {
@@ -88,24 +88,24 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
      */
     @Override
     public Optional<Administrator> get(String email) {
-        Map<String, String> adminData = super.read("email", email);
+        Map<String, Object> adminData = super.read(new String[]{"email"}, new String[]{email});
 
         if (adminData == null) {
             return Optional.empty();
         }
 
         administrator.setUser(
-                adminData.get("cnie"),
-                adminData.get("first_name"),
-                adminData.get("last_name"),
-                Date.valueOf(adminData.get("birthday")),
-                Gender.valueOf(adminData.get("gender")),
-                adminData.get("email"),
-                adminData.get("phone"),
-                adminData.get("pwd_hash")
+                (String) adminData.get("cnie"),
+                (String) adminData.get("first_name"),
+                (String) adminData.get("last_name"),
+                (Date) adminData.get("birthday"),
+                Gender.valueOf((String) adminData.get("gender")),
+                (String) adminData.get("email"),
+                (String) adminData.get("phone"),
+                (String) adminData.get("pwd_hash")
         );
 
-        administrator.setAdministrator_id(Integer.parseInt(adminData.get("administrator_id")));
+        administrator.setAdministrator_id((Integer) adminData.get("administrator_id"));
 
         return Optional.of(administrator);
     }
@@ -119,22 +119,22 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
 
         List<Administrator> Administrators = new ArrayList<>();
 
-        List<Map<String, String>> Admins = super.retrieveAll();
+        List<Map<String, Object>> Admins = super.retrieveAll();
 
         Admins.forEach((adminData) -> {
             Administrator administrator = new Administrator();
 
             administrator.setUser(
-                    adminData.get("cnie"),
-                    adminData.get("first_name"),
-                    adminData.get("last_name"),
-                    Date.valueOf(adminData.get("birthday")),
-                    Gender.valueOf(adminData.get("gender")),
-                    adminData.get("email"),
-                    adminData.get("phone"),
-                    adminData.get("password")
+                    (String) adminData.get("cnie"),
+                    (String) adminData.get("first_name"),
+                    (String) adminData.get("last_name"),
+                    (Date) adminData.get("birthday"),
+                    Gender.valueOf((String) adminData.get("gender")),
+                    (String) adminData.get("email"),
+                    (String) adminData.get("phone"),
+                    (String) adminData.get("password")
             );
-            administrator.setAdministrator_id(Integer.parseInt(adminData.get("administrator_id")));
+            administrator.setAdministrator_id(Integer.parseInt((String) adminData.get("administrator_id")));
             Administrators.add(administrator);
         });
 
@@ -182,22 +182,22 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
     public List<Administrator> find(String criteria) {
         List<Administrator> Administrators = new ArrayList<>();
 
-        List<Map<String, String>> Admins = super.readAll(new String[]{criteria});
+        List<Map<String, Object>> Admins = super.readAll(new String[]{criteria});
 
         Admins.forEach((adminData) -> {
             Administrator administrator = new Administrator();
 
             administrator.setUser(
-                    adminData.get("cnie"),
-                    adminData.get("first_name"),
-                    adminData.get("last_name"),
-                    Date.valueOf(adminData.get("birthday")),
-                    Gender.valueOf(adminData.get("gender")),
-                    adminData.get("email"),
-                    adminData.get("phone"),
-                    adminData.get("password")
+                    (String) adminData.get("cnie"),
+                    (String) adminData.get("first_name"),
+                    (String) adminData.get("last_name"),
+                    (Date) adminData.get("birthday"),
+                    Gender.valueOf((String) adminData.get("gender")),
+                    (String) adminData.get("email"),
+                    (String) adminData.get("phone"),
+                    (String) adminData.get("password")
             );
-            administrator.setAdministrator_id(Integer.parseInt(adminData.get("administrator_id")));
+            administrator.setAdministrator_id((Integer) adminData.get("administrator_id"));
 
             Administrators.add(administrator);
         });

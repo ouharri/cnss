@@ -1,5 +1,7 @@
 package com.macnss.app.Models.user;
 
+import com.macnss.app.Enums.AgentStatus;
+import com.macnss.app.Enums.Gender;
 import com.macnss.app.Models.Abstract.employee;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,19 +13,22 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = false)
 public class AgentCNSS extends employee {
 
-    int agent_cns_id;
+    int agent_cns_id = 0;
+    AgentStatus status = null;
 
-    public Map<String, String> getAgentCNSS() {
-        Map<String, String> agents = new HashMap<>();
+    public Map<String, Object> getAgentCNSS() {
+        Map<String, Object> agents = new HashMap<>();
 
-        agents.put("administrator_id", String.valueOf(this.agent_cns_id));
-        agents.put("cnie", this.cnie);
-        agents.put("first_name", this.firstName);
-        agents.put("last_name", this.lastName);
-        agents.put("email", this.email);
-        agents.put("phone", this.phone);
-        agents.put("gender", this.gender.toString());
-        agents.put("password", this.password);
+        if(this.agent_cns_id != 0) agents.put("agent_id", this.agent_cns_id);
+        if(this.cnie != null) agents.put("cnie", this.cnie);
+        if(this.firstName != null) agents.put("first_name", this.firstName);
+        if(this.lastName != null) agents.put("last_name", this.lastName);
+        if(this.email != null) agents.put("email", this.email);
+        if(this.birthday != null) agents.put("birthday", this.birthday);
+        if(this.phone != null) agents.put("phone", this.phone);
+        if (this.gender != null) agents.put("gender",this.gender);
+        if(this.password != null) agents.put("pwd_hash", this.password);
+        if(this.status != null) agents.put("status", this.status);
 
         return agents;
     }

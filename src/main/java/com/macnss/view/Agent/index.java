@@ -30,7 +30,6 @@ public class index extends JFrame implements ActionListener {
 
     public index(AgentCNSS u) throws SQLException {
 
-
         setTitle("Agent CNSS");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -83,6 +82,8 @@ public class index extends JFrame implements ActionListener {
 
         ImageIcon AppLogoIcon = new ImageIcon("assets/images/app/app.png");
         Image logo = AppLogoIcon.getImage();
+
+        setIconImage(logo);
 
         JLabel AppLogoLabel = new JLabel(new ImageIcon(logo));
         AppLogoLabel.setBounds((screenWidth - 180), screenHeight - 200, 150, 139);
@@ -137,9 +138,6 @@ public class index extends JFrame implements ActionListener {
         add(awaiting_list);
         add(logout);
         setVisible(true);
-
-        // ouharrioutman@gmail.com
-        // 68767498739879
     }
 
 
@@ -229,10 +227,8 @@ public class index extends JFrame implements ActionListener {
         butt.setHorizontalAlignment(SwingConstants.LEFT);
         butt.setContentAreaFilled(false);
         butt.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
         Font police = new Font("SansSerif", Font.BOLD, 15);
         butt.setFont(police);
-
     }
 
 

@@ -13,11 +13,11 @@ public class VisitType {
 	private String visitType;
 	private double reimbursementRate;
 
-	public Map<String,String> getVisitTypes() {
+	public Map<String,Object> getVisitTypes() {
 		return Map.of(
-				"visitTypeId", String.valueOf(this.visitTypeId),
+				"visitTypeId", this.visitTypeId,
 				"visitType", this.visitType,
-				"reimbursementRate", String.valueOf(this.reimbursementRate)
+				"reimbursementRate", this.reimbursementRate
 		);
 	}
 }

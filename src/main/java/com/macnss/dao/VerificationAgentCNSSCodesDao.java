@@ -1,6 +1,7 @@
 package com.macnss.dao;
 
 import com.macnss.Libs.Model;
+import com.macnss.app.Enums.AgentStatus;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,11 +32,13 @@ public class VerificationAgentCNSSCodesDao extends Model {
                     " FROM verification_agents_cnss_codes vac" +
                     " INNER JOIN agents_cnss ac ON vac.agent_id = ac.agent_id" +
                     " WHERE EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - vac.code_generated_at)) < 300" +
-                    "  AND ac.agent_id = ?" +
+                    " AND ac.agent_id = ?" +
+                    " AND ac.status = ?" +
                     " ORDER BY vac.code_generated_at DESC" +
                     " LIMIT 1";
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
             preparedStatement.setInt(1, agent_id);
+            preparedStatement.setObject(2, AgentStatus.ACTIVE, java.sql.Types.OTHER);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getString("result");

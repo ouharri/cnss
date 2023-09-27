@@ -15,7 +15,7 @@ public class MedicineDao extends Model {
     }
 
     public Optional<Medicine> get(String code) {
-        Map<String, String> medicineData = super.read("code", code);
+        Map<String, Object> medicineData = super.read(new String[]{"code"}, new String[]{code});
 
         if (medicineData == null) {
             return Optional.empty();
@@ -24,17 +24,17 @@ public class MedicineDao extends Model {
         Medicine medicine = new Medicine();
 
         medicine.setCode(code);
-        medicine.setName(medicineData.get("name"));
-        medicine.setDc1(medicineData.get("dc1"));
-        medicine.setDosage(Double.parseDouble(medicineData.get("dosage")));
-        medicine.setDosageUnit(medicineData.get("dosage_unit"));
-        medicine.setForm(medicineData.get("form"));
-        medicine.setPresentation(medicineData.get("presentation"));
-        medicine.setPpv(Double.parseDouble(medicineData.get("ppv")));
-        medicine.setPh(medicineData.get("ph"));
-        medicine.setGrossPrice(Double.parseDouble(medicineData.get("gross_price")));
-        medicine.setGenericPrinciples(medicineData.get("generic_principles"));
-        medicine.setReimbursementRate(Double.parseDouble(medicineData.get("reimbursement_rate")));
+        medicine.setName( (String) medicineData.get("name"));
+        medicine.setDc1( (String) medicineData.get("dc1"));
+        medicine.setDosage((Double) medicineData.get("dosage"));
+        medicine.setDosageUnit( (String) medicineData.get("dosage_unit"));
+        medicine.setForm( (String) medicineData.get("form"));
+        medicine.setPresentation( (String) medicineData.get("presentation"));
+        medicine.setPpv(Double.parseDouble( (String) medicineData.get("ppv")));
+        medicine.setPh( (String) medicineData.get("ph"));
+        medicine.setGrossPrice(Double.parseDouble( (String) medicineData.get("gross_price")));
+        medicine.setGenericPrinciples( (String) medicineData.get("generic_principles"));
+        medicine.setReimbursementRate(Double.parseDouble( (String) medicineData.get("reimbursement_rate")));
 
         return Optional.of(medicine);
     }
@@ -42,23 +42,23 @@ public class MedicineDao extends Model {
     public List<Medicine> getAll() {
         List<Medicine> medicines = new ArrayList<>();
 
-        List<Map<String, String>> medicineDataList = super.retrieveAll();
+        List<Map<String, Object>> medicineDataList = super.retrieveAll();
 
         medicineDataList.forEach((medicineData) -> {
             Medicine medicine = new Medicine();
 
-            medicine.setCode(medicineData.get("code"));
-            medicine.setName(medicineData.get("name"));
-            medicine.setDc1(medicineData.get("dc1"));
-            medicine.setDosage(Double.parseDouble(medicineData.get("dosage")));
-            medicine.setDosageUnit(medicineData.get("dosage_unit"));
-            medicine.setForm(medicineData.get("form"));
-            medicine.setPresentation(medicineData.get("presentation"));
-            medicine.setPpv(Double.parseDouble(medicineData.get("ppv")));
-            medicine.setPh(medicineData.get("ph"));
-            medicine.setGrossPrice(Double.parseDouble(medicineData.get("gross_price")));
-            medicine.setGenericPrinciples(medicineData.get("generic_principles"));
-            medicine.setReimbursementRate(Double.parseDouble(medicineData.get("reimbursement_rate")));
+            medicine.setCode((String) medicineData.get("code"));
+            medicine.setName((String) medicineData.get("name"));
+            medicine.setDc1((String) medicineData.get("dc1"));
+            medicine.setDosage(Double.parseDouble((String) medicineData.get("dosage")));
+            medicine.setDosageUnit((String) medicineData.get("dosage_unit"));
+            medicine.setForm((String) medicineData.get("form"));
+            medicine.setPresentation((String) medicineData.get("presentation"));
+            medicine.setPpv(Double.parseDouble((String) medicineData.get("ppv")));
+            medicine.setPh((String) medicineData.get("ph"));
+            medicine.setGrossPrice(Double.parseDouble((String) medicineData.get("gross_price")));
+            medicine.setGenericPrinciples((String) medicineData.get("generic_principles"));
+            medicine.setReimbursementRate(Double.parseDouble((String) medicineData.get("reimbursement_rate")));
 
             medicines.add(medicine);
         });

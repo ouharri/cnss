@@ -24,12 +24,12 @@ public class VisitTypesDao extends Model implements Dao<VisitType> {
 
     @Override
     public VisitType read() {
-        Map<String, String> visitTypeData = super.read(new String[]{String.valueOf(visitTypes.getVisitTypeId())});
+        Map<String, Object> visitTypeData = super.read(new int[]{visitTypes.getVisitTypeId()});
 
         if (visitTypeData != null) {
-            visitTypes.setVisitTypeId(Integer.parseInt(visitTypeData.get("visit_type_id")));
-            visitTypes.setVisitType(visitTypeData.get("visit_type"));
-            visitTypes.setReimbursementRate(Double.parseDouble(visitTypeData.get("visit_reimbursement_rate")));
+            visitTypes.setVisitTypeId((Integer) visitTypeData.get("visit_type_id"));
+            visitTypes.setVisitType( (String) visitTypeData.get("visit_type"));
+            visitTypes.setReimbursementRate(Double.parseDouble( (String) visitTypeData.get("visit_reimbursement_rate")));
 
             return visitTypes;
         } else {

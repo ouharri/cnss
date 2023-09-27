@@ -23,21 +23,21 @@ public class PatientsDao extends Model {
     }
 
     public Patient read() {
-        Map<String, String> patientData = super.read(new String[]{patient.getMatriculate()});
+        Map<String, Object> patientData = super.read(new String[]{patient.getMatriculate()});
 
         if (patientData != null) {
             patient.setUser(
-                    patientData.get("cnie"),
-                    patientData.get("first_name"),
-                    patientData.get("last_name"),
-                    Date.valueOf(patientData.get("birthday")),
-                    Gender.valueOf(patientData.get("gender")),
-                    patientData.get("email"),
-                    patientData.get("phone"),
-                    patientData.get("birthday")
+                    (String) patientData.get("cnie"),
+                    (String) patientData.get("first_name"),
+                    (String) patientData.get("last_name"),
+                    Date.valueOf( (String) patientData.get("birthday")),
+                    Gender.valueOf( (String) patientData.get("gender")),
+                    (String) patientData.get("email"),
+                    (String) patientData.get("phone"),
+                    (String) patientData.get("birthday")
             );
 
-            patient.setMatriculate(patientData.get("matriculate"));
+            patient.setMatriculate((String) patientData.get("matriculate"));
 
             return patient;
         } else {
@@ -54,24 +54,24 @@ public class PatientsDao extends Model {
     }
 
     public Optional<Patient> get(String matriculate) {
-        Map<String, String> patientData = super.read("matriculate", matriculate);
+        Map<String, Object> patientData = super.read(new String[]{"matriculate"}, new String[]{matriculate});
 
         if (patientData == null) {
             return Optional.empty();
         }
 
         patient.setUser(
-                patientData.get("cnie"),
-                patientData.get("first_name"),
-                patientData.get("last_name"),
-                Date.valueOf(patientData.get("birthday")),
-                Gender.valueOf(patientData.get("gender")),
-                patientData.get("email"),
-                patientData.get("phone"),
-                patientData.get("birthday")
+                (String) patientData.get("cnie"),
+                (String) patientData.get("first_name"),
+                (String) patientData.get("last_name"),
+                Date.valueOf( (String) patientData.get("birthday")),
+                Gender.valueOf( (String) patientData.get("gender")),
+                (String) patientData.get("email"),
+                (String) patientData.get("phone"),
+                (String) patientData.get("birthday")
         );
 
-        patient.setMatriculate(patientData.get("matriculate"));
+        patient.setMatriculate( (String) patientData.get("matriculate"));
 
         return Optional.of(patient);
     }

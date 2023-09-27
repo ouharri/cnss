@@ -5,13 +5,13 @@ import java.sql.*;
 
 
 public interface CRUD {
-    String create(Map<String, String> data) throws SQLException;
+    String create(Map<String, Object> data) throws SQLException;
 
-    Map<String, String> read(String[] ids);
+    Map<String, Object> read(String[] ids);
 
-    Map<String, String> read(String columnName, String value);
+    Map<String, Object> read(String[] columnNames, String[] values);
 
-    boolean update(Map<String, String> data, String[] ids);
+    boolean update(Map<String, Object> data, String[] ids);
 
     boolean delete(String[] ids);
 }

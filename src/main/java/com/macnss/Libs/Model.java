@@ -76,8 +76,8 @@ public class Model implements AutoCloseable, CRUD {
      *
      * @return A list of maps, where each map represents a row of data with column names as keys.
      */
-    public List<Map<String, String>> retrieveAll() {
-        List<Map<String, String>> resultList = new ArrayList<>();
+    public List<Map<String, Object>> retrieveAll() {
+        List<Map<String, Object>> resultList = new ArrayList<>();
         try {
             String query = "SELECT * FROM " + this._table;
 
@@ -92,11 +92,11 @@ public class Model implements AutoCloseable, CRUD {
             int columnCount = metaData.getColumnCount();
 
             while (resultSet.next()) {
-                Map<String, String> rowData = new HashMap<>();
+                Map<String, Object> rowData = new HashMap<>();
 
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);
-                    rowData.put(columnName, resultSet.getString(columnName));
+                    rowData.put(columnName, resultSet.getObject(columnName));
                 }
 
                 resultList.add(rowData);
@@ -114,8 +114,8 @@ public class Model implements AutoCloseable, CRUD {
      * @param columns The columns in which to perform the search.
      * @return A list of maps, where each map represents a row of data with column names as keys.
      */
-    public List<Map<String, String>> search(String keyword, String[] columns) {
-        List<Map<String, String>> resultList = new ArrayList<>();
+    public List<Map<String, Object>> search(String keyword, String[] columns) {
+        List<Map<String, Object>> resultList = new ArrayList<>();
         try {
             StringBuilder queryBuilder = new StringBuilder();
             queryBuilder.append("SELECT * FROM ").append(this._table).append(" WHERE ");
@@ -137,7 +137,7 @@ public class Model implements AutoCloseable, CRUD {
             PreparedStatement preparedStatement = this.connection.prepareStatement(queryBuilder.toString());
 
             for (int i = 0; i < columns.length; i++) {
-                preparedStatement.setString(i + 1, "%" + keyword + "%");
+                preparedStatement.setObject(i + 1, "%" + keyword + "%");
             }
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -146,11 +146,11 @@ public class Model implements AutoCloseable, CRUD {
             int columnCount = metaData.getColumnCount();
 
             while (resultSet.next()) {
-                Map<String, String> rowData = new HashMap<>();
+                Map<String, Object> rowData = new HashMap<>();
 
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);
-                    rowData.put(columnName, resultSet.getString(columnName));
+                    rowData.put(columnName, resultSet.getObject(columnName));
                 }
 
                 resultList.add(rowData);
@@ -169,11 +169,11 @@ public class Model implements AutoCloseable, CRUD {
      * @throws SQLException If a database access error occurs.
      */
     @Override
-    public String create(Map<String, String> data) throws SQLException {
+    public String create(Map<String, Object> data) throws SQLException {
         StringBuilder columns = new StringBuilder();
         StringBuilder values = new StringBuilder();
 
-        for (Map.Entry<String, String> entry : data.entrySet()) {
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
             columns.append(entry.getKey()).append(",");
             values.append("?").append(",");
         }
@@ -185,19 +185,23 @@ public class Model implements AutoCloseable, CRUD {
         PreparedStatement preparedStatement = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
         int index = 1;
-        for (String value : data.values()) {
-            preparedStatement.setString(index++, value);
+        for (Object value : data.values()) {
+            if (value instanceof Enum<?>) {
+                preparedStatement.setObject(index++, value, Types.OTHER);
+            } else {
+                preparedStatement.setObject(index++, value);
+            }
         }
 
         int rowsAffected = preparedStatement.executeUpdate();
 
         if (rowsAffected > 0) {
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                return generatedKeys.getString(1);
-            } else {
-                return data.get(this._primaryKey[0]);
-            }
+//            if (generatedKeys.next()) {
+//                return generatedKeys.getString(1);
+//            } else {
+                return (String) data.get(this._primaryKey[0]);
+//            }
         }
         return null;
     }
@@ -209,7 +213,7 @@ public class Model implements AutoCloseable, CRUD {
      * @return A map representing the retrieved record's data, or null if the record is not found.
      */
     @Override
-    public Map<String, String> read(String[] ids) {
+    public Map<String, Object> read(String[] ids) {
         try {
             StringBuilder whereClause = new StringBuilder();
             for (int i = 0; i < _primaryKey.length; i++) {
@@ -228,20 +232,63 @@ public class Model implements AutoCloseable, CRUD {
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
 
             for (int i = 0; i < ids.length; i++) {
-                preparedStatement.setString(i + 1, ids[i]);
+                preparedStatement.setObject(i + 1, ids[i]);
             }
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Map<String, String> rowData = new HashMap<>();
+                Map<String, Object> rowData = new HashMap<>();
 
                 ResultSetMetaData metaData = resultSet.getMetaData();
                 int columnCount = metaData.getColumnCount();
 
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);
-                    rowData.put(columnName, resultSet.getString(columnName));
+                    rowData.put(columnName, resultSet.getObject(columnName));
+                }
+
+                return rowData;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Map<String, Object> read(int[] ids) {
+        try {
+            StringBuilder whereClause = new StringBuilder();
+            for (int i = 0; i < _primaryKey.length; i++) {
+                whereClause.append(_primaryKey[i]).append(" = ?");
+                if (i < _primaryKey.length - 1) {
+                    whereClause.append(" AND ");
+                }
+            }
+
+            String query = "SELECT * FROM " + this._table + " WHERE " + whereClause.toString();
+
+            if (this._softDelete) {
+                query += " AND delete_at IS NULL";
+            }
+
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+
+            for (int i = 0; i < ids.length; i++) {
+                preparedStatement.setObject(i + 1, ids[i]);
+            }
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                Map<String, Object> rowData = new HashMap<>();
+
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    rowData.put(columnName, resultSet.getObject(columnName));
                 }
 
                 return rowData;
@@ -255,36 +302,46 @@ public class Model implements AutoCloseable, CRUD {
     /**
      * Reads a single record from the associated database table based on a specific column value.
      *
-     * @param columnName The name of the column to search.
-     * @param value      The value to search for in the specified column.
+     * @param columnNames The name of the column to search.
+     * @param values      The value to search for in the specified column.
      * @return A map representing the retrieved record's data, or null if the record is not found.
      */
     @Override
-    public Map<String, String> read(String columnName, String value) {
+    public Map<String, Object> read(String[] columnNames, String[] values) {
         try {
-            String query = "SELECT * FROM " + this._table + " WHERE " + columnName + " = ?";
-
-            if (this._softDelete) {
-                query += " AND delete_at IS NULL";
+            if (columnNames.length != values.length) {
+                throw new IllegalArgumentException("The columnNames and values arrays must have the same length.");
             }
 
-            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-            preparedStatement.setString(1, value);
+            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM ").append(this._table).append(" WHERE ");
+
+            for (int i = 0; i < columnNames.length; i++) {
+                if (i > 0) {
+                    queryBuilder.append(" AND ");
+                }
+                queryBuilder.append(columnNames[i]).append(" = ?");
+            }
+
+            if (this._softDelete) {
+                queryBuilder.append(" AND delete_at IS NULL");
+            }
+
+            PreparedStatement preparedStatement = this.connection.prepareStatement(queryBuilder.toString());
+
+            for (int i = 0; i < values.length; i++) {
+                preparedStatement.setString(i + 1, values[i]);
+            }
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Map<String, String> rowData = new HashMap<>();
-
-                // Remplir la map avec les données de la ligne
-                // Utilisez resultSet.getString("nom_de_la_colonne") pour récupérer les valeurs
-
+                Map<String, Object> rowData = new HashMap<>();
                 ResultSetMetaData metaData = resultSet.getMetaData();
                 int columnCount = metaData.getColumnCount();
 
                 for (int i = 1; i <= columnCount; i++) {
                     String column = metaData.getColumnName(i);
-                    rowData.put(column, resultSet.getString(column));
+                    rowData.put(column, resultSet.getObject(column));
                 }
 
                 return rowData;
@@ -294,6 +351,7 @@ public class Model implements AutoCloseable, CRUD {
         }
         return null;
     }
+
 
     /**
      * Retrieves the count of records in the associated database table that match a specific column value.
@@ -332,8 +390,8 @@ public class Model implements AutoCloseable, CRUD {
      * @param value      The value to search for in the specified column.
      * @return A list of maps, where each map represents a row of data with column names as keys.
      */
-    public List<Map<String, String>> readAll(String columnName, String value) {
-        List<Map<String, String>> resultList = new ArrayList<>();
+    public List<Map<String, Object>> readAll(String columnName, String value) {
+        List<Map<String, Object>> resultList = new ArrayList<>();
         try {
             String query = "SELECT * FROM " + this._table + " WHERE " + columnName + " = ?";
 
@@ -350,11 +408,11 @@ public class Model implements AutoCloseable, CRUD {
             int columnCount = metaData.getColumnCount();
 
             while (resultSet.next()) {
-                Map<String, String> rowData = new HashMap<>();
+                Map<String, Object> rowData = new HashMap<>();
 
                 for (int i = 1; i <= columnCount; i++) {
                     String column = metaData.getColumnName(i);
-                    rowData.put(column, resultSet.getString(column));
+                    rowData.put(column, resultSet.getObject(column));
                 }
 
                 resultList.add(rowData);
@@ -371,8 +429,8 @@ public class Model implements AutoCloseable, CRUD {
      * @param ids An array of primary key values used to identify the records.
      * @return A list of maps, where each map represents a row of data with column names as keys.
      */
-    public List<Map<String, String>> readAll(String[] ids) {
-        List<Map<String, String>> resultList = new ArrayList<>();
+    public List<Map<String, Object>> readAll(String[] ids) {
+        List<Map<String, Object>> resultList = new ArrayList<>();
         try {
             StringBuilder whereClause = new StringBuilder();
             for (int i = 0; i < _primaryKey.length; i++) {
@@ -400,11 +458,11 @@ public class Model implements AutoCloseable, CRUD {
             int columnCount = metaData.getColumnCount();
 
             while (resultSet.next()) {
-                Map<String, String> rowData = new HashMap<>();
+                Map<String, Object> rowData = new HashMap<>();
 
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);
-                    rowData.put(columnName, resultSet.getString(columnName));
+                    rowData.put(columnName, resultSet.getObject(columnName));
                 }
 
                 resultList.add(rowData);
@@ -423,10 +481,10 @@ public class Model implements AutoCloseable, CRUD {
      * @return True if the update operation is successful; otherwise, false.
      */
     @Override
-    public boolean update(Map<String, String> data,String[] ids) {
+    public boolean update(Map<String, Object> data, String[] ids) {
         try {
             StringBuilder setClause = new StringBuilder();
-            for (Map.Entry<String, String> entry : data.entrySet()) {
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
                 setClause.append(entry.getKey()).append(" = ?,");
             }
             setClause.setLength(setClause.length() - 1);
@@ -443,8 +501,8 @@ public class Model implements AutoCloseable, CRUD {
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
 
             int index = 1;
-            for (String value : data.values()) {
-                preparedStatement.setString(index++, value);
+            for (Object value : data.values()) {
+                preparedStatement.setObject(index++, value);
             }
 
             for (String id : ids) {

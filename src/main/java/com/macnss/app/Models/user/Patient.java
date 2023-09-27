@@ -21,16 +21,16 @@ public class Patient extends User {
     private List<Document> documentList;
 
 
-    public Map<String, String> getPatient() {
-        Map<String, String> patient = new HashMap<>();
+    public Map<String, Object> getPatient() {
+        Map<String, Object> patient = new HashMap<>();
 
-        patient.put("administrator_id", String.valueOf(this.matriculate));
+        patient.put("administrator_id", this.matriculate);
         patient.put("cnie", this.cnie);
         patient.put("first_name", this.firstName);
         patient.put("last_name", this.lastName);
         patient.put("email", this.email);
         patient.put("phone", this.phone);
-        patient.put("gender", this.gender.toString());
+        patient.put("gender", this.gender);
         patient.put("password", this.password);
 
         return patient;

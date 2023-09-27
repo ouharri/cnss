@@ -1,6 +1,7 @@
 package com.macnss.dao;
 
 import com.macnss.Libs.Model;
+import com.macnss.app.Enums.AgentStatus;
 import com.macnss.app.Enums.Gender;
 import com.macnss.app.Models.user.AgentCNSS;
 import com.macnss.interfaces.Dao.Dao;
@@ -17,13 +18,18 @@ import java.util.Optional;
  */
 public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
 
-    private final AgentCNSS agentCnss = new AgentCNSS();
+    private AgentCNSS agentCnss = new AgentCNSS();
 
     /**
      * Constructs a new AgentCNSSDao with default settings.
      */
     public AgentCNSSDao() {
         super("agents_cnss", new String[]{"agent_id"});
+    }
+
+    public AgentCNSSDao(AgentCNSS agent) {
+        super("agents_cnss", new String[]{"agent_id"});
+        agentCnss = agent;
     }
 
     /**
@@ -33,21 +39,22 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
      */
     @Override
     public AgentCNSS read() {
-        Map<String, String> agentData = super.read(new String[]{String.valueOf(agentCnss.getAgent_cns_id())});
+        Map<String, Object> agentData = super.read(new int[]{agentCnss.getAgent_cns_id()});
 
         if (agentData != null) {
             agentCnss.setUser(
-                    agentData.get("cnie"),
-                    agentData.get("first_name"),
-                    agentData.get("last_name"),
-                    Date.valueOf(agentData.get("birthday")),
-                    Gender.valueOf(agentData.get("gender")),
-                    agentData.get("email"),
-                    agentData.get("phone"),
-                    agentData.get("password")
+                    (String) agentData.get("cnie"),
+                    (String) agentData.get("first_name"),
+                    (String) agentData.get("last_name"),
+                    Date.valueOf((String) agentData.get("birthday")),
+                    Gender.valueOf((String) agentData.get("gender")),
+                    (String) agentData.get("email"),
+                    (String)agentData.get("phone"),
+                    (String)agentData.get("password")
             );
 
-            agentCnss.setAgent_cns_id(Integer.parseInt(agentData.get("agent_id")));
+            agentCnss.setAgent_cns_id((Integer) agentData.get("agent_id"));
+            agentCnss.setStatus(AgentStatus.valueOf((String) agentData.get("status")));
 
             return agentCnss;
         } else {
@@ -63,11 +70,15 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
      */
     @Override
     public Optional<AgentCNSS> save() throws SQLException {
-        if (super.create(agentCnss.getAgentCNSS()) == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(read());
-        }
+        super.create(agentCnss.getAgentCNSS());
+        return Optional.of(agentCnss);
+
+//        agentCnss.setAgent_cns_id( Integer.parseInt( ));
+//        if (agentCnss.getAgent_cns_id() == 0) {
+//            return Optional.empty();
+//        } else {
+//            return Optional.of((AgentCNSS) agentCnss.getAgentCNSS());
+//        }
     }
 
     /**
@@ -78,24 +89,24 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
      */
     @Override
     public Optional<AgentCNSS> get(String email) {
-        Map<String, String> agentData = super.read("email", email);
+        Map<String, Object> agentData = super.read(new String[]{"email", "status::text"}, new String[]{email, AgentStatus.ACTIVE.toString()});
 
         if (agentData == null) {
             return Optional.empty();
         }
 
         agentCnss.setUser(
-                agentData.get("cnie"),
-                agentData.get("first_name"),
-                agentData.get("last_name"),
-                Date.valueOf(agentData.get("birthday")),
-                Gender.valueOf(agentData.get("gender")),
-                agentData.get("email"),
-                agentData.get("phone"),
-                agentData.get("pwd_hash")
+                (String)agentData.get("cnie"),
+                (String)agentData.get("first_name"),
+                (String)agentData.get("last_name"),
+                (Date)agentData.get("birthday"),
+                Gender.valueOf((String) agentData.get("gender")),
+                (String)agentData.get("email"),
+                (String)agentData.get("phone"),
+                (String)agentData.get("pwd_hash")
         );
 
-        agentCnss.setAgent_cns_id(Integer.parseInt(agentData.get("agent_id")));
+        agentCnss.setAgent_cns_id((Integer)agentData.get("agent_id"));
 
         return Optional.of(agentCnss);
     }
@@ -108,24 +119,25 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
     public List<AgentCNSS> getAll() {
         List<AgentCNSS> agentsCNSS = new ArrayList<>();
 
-        List<Map<String, String>> agents = super.retrieveAll();
+        List<Map<String, Object>> agents = super.retrieveAll();
 
-        if (agents.isEmpty()) return agentsCNSS;
+        if (agents.isEmpty()) return null;
 
         agents.forEach((agentData) -> {
             AgentCNSS agentCNSS = new AgentCNSS();
 
             agentCNSS.setUser(
-                    agentData.get("cnie"),
-                    agentData.get("first_name"),
-                    agentData.get("last_name"),
-                    Date.valueOf(agentData.get("birthday")),
-                    Gender.valueOf(agentData.get("gender")),
-                    agentData.get("email"),
-                    agentData.get("phone"),
-                    agentData.get("password")
+                    (String) agentData.get("cnie"),
+                    (String) agentData.get("first_name"),
+                    (String) agentData.get("last_name"),
+                    (Date) agentData.get("birthday"),
+                    Gender.valueOf((String) agentData.get("gender")),
+                    (String) agentData.get("email"),
+                    (String) agentData.get("phone"),
+                    (String) agentData.get("password")
             );
-            agentCNSS.setAgent_cns_id(Integer.parseInt(agentData.get("agent_id")));
+            agentCNSS.setAgent_cns_id((Integer) agentData.get("agent_id"));
+            agentCNSS.setStatus(AgentStatus.valueOf((String) agentData.get("status")));
 
             agentsCNSS.add(agentCNSS);
         });
@@ -174,7 +186,7 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
     public List<AgentCNSS> find(String criteria) {
         List<AgentCNSS> agentsCNSS = new ArrayList<>();
 
-        List<Map<String, String>> agents = super.readAll(new String[]{criteria});
+        List<Map<String, Object>> agents = super.readAll(new String[]{criteria});
 
         if (agents.isEmpty()) return agentsCNSS;
 
@@ -182,16 +194,16 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
             AgentCNSS agentCNSS = new AgentCNSS();
 
             agentCNSS.setUser(
-                    agentData.get("cnie"),
-                    agentData.get("first_name"),
-                    agentData.get("last_name"),
-                    Date.valueOf(agentData.get("birthday")),
-                    Gender.valueOf(agentData.get("gender")),
-                    agentData.get("email"),
-                    agentData.get("phone"),
-                    agentData.get("password")
+                    (String) agentData.get("cnie"),
+                    (String)  agentData.get("first_name"),
+                    (String) agentData.get("last_name"),
+                    Date.valueOf((String) agentData.get("birthday")),
+                    Gender.valueOf((String) agentData.get("gender")),
+                    (String) agentData.get("email"),
+                    (String) agentData.get("phone"),
+                    (String) agentData.get("password")
             );
-            agentCNSS.setAgent_cns_id(Integer.parseInt(agentData.get("agent_id")));
+            agentCNSS.setAgent_cns_id((Integer) agentData.get("agent_id"));
 
             agentsCNSS.add(agentCNSS);
         });

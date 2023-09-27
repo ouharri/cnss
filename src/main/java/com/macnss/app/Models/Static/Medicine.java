@@ -24,22 +24,22 @@ public class Medicine {
 	private String genericPrinciples;
 	private double reimbursementRate;
 
-	public Map<String, String> getMedicine(){
+	public Map<String, Object> getMedicine(){
 
-		Map<String,String> medicine = new HashMap<>();
+		Map<String,Object> medicine = new HashMap<>();
 
 		medicine.put("code", this.code);
 		medicine.put("name", this.name);
 		medicine.put("dc1", this.dc1);
-		medicine.put("dosage", String.valueOf(this.dosage));
+		medicine.put("dosage", this.dosage);
 		medicine.put("dosage_unit", this.dosageUnit);
 		medicine.put("form", this.form);
 		medicine.put("presentation", this.presentation);
-		medicine.put("ppv", String.valueOf(this.ppv));
+		medicine.put("ppv", this.ppv);
 		medicine.put("ph", this.ph);
-		medicine.put("gross_price", String.valueOf(this.grossPrice));
+		medicine.put("gross_price", this.grossPrice);
 		medicine.put("generic_principles", this.genericPrinciples);
-		medicine.put("reimbursement_rate", String.valueOf(this.reimbursementRate));
+		medicine.put("reimbursement_rate", this.reimbursementRate);
 
 		return medicine;
 	}

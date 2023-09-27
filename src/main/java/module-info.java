@@ -17,6 +17,7 @@ module com.biblio {
     requires jbcrypt;
     requires cloudinary.http44;
     requires cloudinary.core;
+    requires jcalendar;
 
     opens com.macnss to javafx.fxml;
     exports com.macnss;

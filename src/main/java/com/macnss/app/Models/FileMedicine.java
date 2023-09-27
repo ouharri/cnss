@@ -6,7 +6,7 @@ import java.util.Map;
 public class FileMedicine {
 
 
-    public Map<String, String> getFileMedicine() {
+    public Map<String, Object> getFileMedicine() {
         return null;
     }
 }
