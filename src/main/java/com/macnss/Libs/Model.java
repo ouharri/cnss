@@ -1,7 +1,6 @@
 package com.macnss.Libs;
 
 import com.macnss.Core.database;
-import com.macnss.interfaces.Libs.CRUD;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.Map;
  * The `Model` class provides a generic model for interacting with a database table. It implements CRUD (Create, Read, Update, Delete) operations
  * and supports transactions. This class should be extended by specific models for individual database tables.
  */
-public class Model implements AutoCloseable, CRUD {
+public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
     protected Connection connection = null;
     protected String _table = null;
     protected String[] _primaryKey = {"id"};
@@ -76,6 +75,7 @@ public class Model implements AutoCloseable, CRUD {
      *
      * @return A list of maps, where each map represents a row of data with column names as keys.
      */
+    @Override
     public List<Map<String, Object>> retrieveAll() {
         List<Map<String, Object>> resultList = new ArrayList<>();
         try {
@@ -169,7 +169,7 @@ public class Model implements AutoCloseable, CRUD {
      * @throws SQLException If a database access error occurs.
      */
     @Override
-    public String create(Map<String, Object> data) throws SQLException {
+    public Object create(Map<String, Object> data) throws SQLException {
         StringBuilder columns = new StringBuilder();
         StringBuilder values = new StringBuilder();
 
@@ -197,11 +197,11 @@ public class Model implements AutoCloseable, CRUD {
 
         if (rowsAffected > 0) {
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-//            if (generatedKeys.next()) {
-//                return generatedKeys.getString(1);
-//            } else {
-                return (String) data.get(this._primaryKey[0]);
-//            }
+            if (generatedKeys.next()) {
+                return generatedKeys.getObject(1);
+            } else {
+                return data.get(this._primaryKey[0]);
+            }
         }
         return null;
     }
@@ -213,7 +213,7 @@ public class Model implements AutoCloseable, CRUD {
      * @return A map representing the retrieved record's data, or null if the record is not found.
      */
     @Override
-    public Map<String, Object> read(String[] ids) {
+    public Map<String, Object> read(Object[] ids) {
         try {
             StringBuilder whereClause = new StringBuilder();
             for (int i = 0; i < _primaryKey.length; i++) {
@@ -232,50 +232,11 @@ public class Model implements AutoCloseable, CRUD {
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
 
             for (int i = 0; i < ids.length; i++) {
-                preparedStatement.setObject(i + 1, ids[i]);
-            }
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                Map<String, Object> rowData = new HashMap<>();
-
-                ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount();
-
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnName(i);
-                    rowData.put(columnName, resultSet.getObject(columnName));
+                if (ids[i] instanceof Enum<?>) {
+                    preparedStatement.setObject(i + 1, ids[i], Types.OTHER);
+                } else {
+                    preparedStatement.setObject(i + 1, ids[i]);
                 }
-
-                return rowData;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public Map<String, Object> read(int[] ids) {
-        try {
-            StringBuilder whereClause = new StringBuilder();
-            for (int i = 0; i < _primaryKey.length; i++) {
-                whereClause.append(_primaryKey[i]).append(" = ?");
-                if (i < _primaryKey.length - 1) {
-                    whereClause.append(" AND ");
-                }
-            }
-
-            String query = "SELECT * FROM " + this._table + " WHERE " + whereClause.toString();
-
-            if (this._softDelete) {
-                query += " AND delete_at IS NULL";
-            }
-
-            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-
-            for (int i = 0; i < ids.length; i++) {
-                preparedStatement.setObject(i + 1, ids[i]);
             }
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -307,7 +268,7 @@ public class Model implements AutoCloseable, CRUD {
      * @return A map representing the retrieved record's data, or null if the record is not found.
      */
     @Override
-    public Map<String, Object> read(String[] columnNames, String[] values) {
+    public Map<String, Object> read(String[] columnNames, Object[] values) {
         try {
             if (columnNames.length != values.length) {
                 throw new IllegalArgumentException("The columnNames and values arrays must have the same length.");
@@ -329,7 +290,12 @@ public class Model implements AutoCloseable, CRUD {
             PreparedStatement preparedStatement = this.connection.prepareStatement(queryBuilder.toString());
 
             for (int i = 0; i < values.length; i++) {
-                preparedStatement.setString(i + 1, values[i]);
+                if (values[i] instanceof Enum<?>) {
+                    preparedStatement.setObject(i + 1, values[i], Types.OTHER);
+
+                } else {
+                    preparedStatement.setObject(i + 1, values[i]);
+                }
             }
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -390,7 +356,7 @@ public class Model implements AutoCloseable, CRUD {
      * @param value      The value to search for in the specified column.
      * @return A list of maps, where each map represents a row of data with column names as keys.
      */
-    public List<Map<String, Object>> readAll(String columnName, String value) {
+    public List<Map<String, Object>> readAll(String columnName, Object value) {
         List<Map<String, Object>> resultList = new ArrayList<>();
         try {
             String query = "SELECT * FROM " + this._table + " WHERE " + columnName + " = ?";
@@ -400,7 +366,12 @@ public class Model implements AutoCloseable, CRUD {
             }
 
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-            preparedStatement.setString(1, value);
+
+            if (value instanceof Enum<?>) {
+                preparedStatement.setObject(1, value, Types.OTHER);
+            } else {
+                preparedStatement.setObject(1, value);
+            }
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -429,7 +400,7 @@ public class Model implements AutoCloseable, CRUD {
      * @param ids An array of primary key values used to identify the records.
      * @return A list of maps, where each map represents a row of data with column names as keys.
      */
-    public List<Map<String, Object>> readAll(String[] ids) {
+    public List<Map<String, Object>> readAll(Object[] ids) {
         List<Map<String, Object>> resultList = new ArrayList<>();
         try {
             StringBuilder whereClause = new StringBuilder();
@@ -449,7 +420,12 @@ public class Model implements AutoCloseable, CRUD {
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
 
             for (int i = 0; i < ids.length; i++) {
-                preparedStatement.setString(i + 1, ids[i]);
+                if (ids[i] instanceof Enum<?>) {
+                    preparedStatement.setObject(i + 1, ids[i], Types.OTHER);
+
+                } else {
+                    preparedStatement.setObject(i + 1, ids[i]);
+                }
             }
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -481,7 +457,7 @@ public class Model implements AutoCloseable, CRUD {
      * @return True if the update operation is successful; otherwise, false.
      */
     @Override
-    public boolean update(Map<String, Object> data, String[] ids) {
+    public boolean update(Map<String, Object> data, Object[] ids) {
         try {
             StringBuilder setClause = new StringBuilder();
             for (Map.Entry<String, Object> entry : data.entrySet()) {
@@ -502,11 +478,19 @@ public class Model implements AutoCloseable, CRUD {
 
             int index = 1;
             for (Object value : data.values()) {
-                preparedStatement.setObject(index++, value);
+                if (value instanceof Enum<?>) {
+                    preparedStatement.setObject(index++, value, Types.OTHER);
+                } else {
+                    preparedStatement.setObject(index++, value);
+                }
             }
 
-            for (String id : ids) {
-                preparedStatement.setString(index++, id);
+            for (Object id : ids) {
+                if (id instanceof Enum<?>) {
+                    preparedStatement.setObject(index++, id, Types.OTHER);
+                } else {
+                    preparedStatement.setObject(index++, id);
+                }
             }
 
             int rowsAffected = preparedStatement.executeUpdate();
@@ -524,7 +508,7 @@ public class Model implements AutoCloseable, CRUD {
      * @return True if the delete operation is successful; otherwise, false.
      */
     @Override
-    public boolean delete(String[] ids) {
+    public boolean delete(Object[] ids) {
         try {
             StringBuilder whereClause = new StringBuilder();
 
@@ -542,7 +526,11 @@ public class Model implements AutoCloseable, CRUD {
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
 
             for (int i = 0; i < ids_length && i < primaryKey_length; i++) {
-                preparedStatement.setString(i + 1, ids[i]);
+                if (ids[i] instanceof Enum<?>) {
+                    preparedStatement.setObject(i + 1, ids[i], Types.OTHER);
+                } else {
+                    preparedStatement.setObject(i + 1, ids[i]);
+                }
             }
 
             int rowsAffected = preparedStatement.executeUpdate();
@@ -560,7 +548,7 @@ public class Model implements AutoCloseable, CRUD {
      * @param ids The array of IDs of records to be soft-deleted.
      * @return True if the records were successfully soft-deleted; otherwise, false.
      */
-    public boolean softDelete(String[] ids) {
+    public boolean softDelete(Object[] ids) {
         try {
 
             String query = "UPDATE " + _table + " SET " + "delete_at = ?" + " WHERE ";
@@ -580,7 +568,11 @@ public class Model implements AutoCloseable, CRUD {
             preparedStatement.setTimestamp(1, currentTimestamp);
 
             for (int i = 0; i < ids.length; i++) {
-                preparedStatement.setString(i + 2, ids[i]);
+                if (ids[i] instanceof Enum<?>) {
+                    preparedStatement.setObject(i + 2, ids[i], Types.OTHER);
+                } else {
+                    preparedStatement.setObject(i + 2, ids[i]);
+                }
             }
 
             int rowsAffected = preparedStatement.executeUpdate();

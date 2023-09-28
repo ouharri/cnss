@@ -24,7 +24,7 @@ public class VisitTypesDao extends Model implements Dao<VisitType> {
 
     @Override
     public VisitType read() {
-        Map<String, Object> visitTypeData = super.read(new int[]{visitTypes.getVisitTypeId()});
+        Map<String, Object> visitTypeData = super.read(new Object[]{visitTypes.getVisitTypeId()});
 
         if (visitTypeData != null) {
             visitTypes.setVisitTypeId((Integer) visitTypeData.get("visit_type_id"));
