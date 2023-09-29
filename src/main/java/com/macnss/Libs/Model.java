@@ -13,8 +13,8 @@ import java.util.Map;
  * and supports transactions. This class should be extended by specific models for individual database tables.
  */
 public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
-    protected Connection connection = null;
-    protected String _table = null;
+    protected Connection connection;
+    protected String _table;
     protected String[] _primaryKey = {"id"};
     protected String _foreignKey = null;
     protected Boolean _softDelete = false;
@@ -584,13 +584,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
     }
 
     @Override
-    public void close() throws Exception {
-//        if (this.connection != null) {
-//            try {
-//                this.connection.close();
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
+    public void close() {
+            this.connection = database.closeConnection();
     }
 }
