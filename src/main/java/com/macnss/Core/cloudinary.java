@@ -1,11 +1,12 @@
 package com.macnss.Core;
 
-import com.cloudinary.*;
+import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
+/**
+ * The Cloudinary class provides a centralized instance of the Cloudinary client
+ * for interacting with the Cloudinary service.
+ */
 public class cloudinary {
 
     private static volatile Cloudinary cloudinary = null;
@@ -13,9 +14,12 @@ public class cloudinary {
     private cloudinary() {
     }
 
+    /**
+     * Initializes the Cloudinary client instance.
+     */
     static {
         if (cloudinary == null) {
-            synchronized (cloudinary.class) {  // Utilisez la classe cloudinary pour la synchronisation
+            synchronized (cloudinary.class) {
                 if (cloudinary == null) {
                     cloudinary = new Cloudinary(ObjectUtils.asMap(
                             "cloud_name", env.get("CLOUDINARY_CLOUD_NAME"),
@@ -26,6 +30,11 @@ public class cloudinary {
         }
     }
 
+    /**
+     * Retrieves the Cloudinary client instance.
+     *
+     * @return The Cloudinary client instance.
+     */
     public static Cloudinary getCloudinary() {
         return cloudinary;
     }

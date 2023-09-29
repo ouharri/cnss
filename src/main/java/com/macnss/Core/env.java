@@ -6,10 +6,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The `env` class provides access to environment variables loaded from a .env file.
+ */
 public class env {
     private static final Map<String, String> envVariables = new HashMap<>();
 
-    private env() {}
+    private env() {
+    }
 
     static {
         synchronized (env.class) {
@@ -37,6 +41,12 @@ public class env {
         }
     }
 
+    /**
+     * Get the value of an environment variable by its key.
+     *
+     * @param key The key of the environment variable.
+     * @return The value of the environment variable, or null if not found.
+     */
     public static String get(String key) {
         return envVariables.get(key);
     }

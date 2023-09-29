@@ -7,6 +7,10 @@ import jakarta.mail.Session;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * The MailProvider class provides a centralized instance of the JavaMail Session
+ * for sending email using SMTP with authentication.
+ */
 public class MailProvider {
 
     private static volatile Session mailSession = null;
@@ -34,6 +38,11 @@ public class MailProvider {
         }
     }
 
+    /**
+     * Retrieves the JavaMail Session for sending emails.
+     *
+     * @return The JavaMail Session instance.
+     */
     public static Session getMailSession() {
         return mailSession;
     }
