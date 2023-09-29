@@ -5,18 +5,24 @@ import com.macnss.Core.env;
 
 import com.macnss.app.Exceptions.EmailException;
 import jakarta.mail.*;
-import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
-public class EmailService  implements Runnable {
-    private String recipient;
-    private String subject;
-    private String body;
+/**
+ * The `EmailService` class provides a way to send email messages using JavaMail.
+ * It allows you to create and send plain text or HTML email messages.
+ */
+public class EmailService implements Runnable {
 
-    Message message = null;
+    private final Message message;
 
-    public EmailService(String recipient, String subject) throws MessagingException {
+    /**
+     * Constructs an `EmailService` instance with the specified recipient and subject.
+     *
+     * @param recipient The email address of the recipient.
+     * @param subject   The subject of the email.
+     */
+    public EmailService(String recipient, String subject) {
         message = new MimeMessage(MailProvider.getMailSession());
         try {
             message.setFrom(new InternetAddress(env.get("MAIL_SMTP_FROM")));
@@ -27,16 +33,33 @@ public class EmailService  implements Runnable {
         }
     }
 
+    /**
+     * Sets the plain text content of the email.
+     *
+     * @param body The plain text content of the email.
+     * @throws MessagingException If there is an error while setting the email content.
+     */
     public void setText(String body) throws MessagingException {
         message.setText(body);
     }
 
+    /**
+     * Sets the HTML content of the email.
+     *
+     * @param body The HTML content of the email.
+     * @throws MessagingException If there is an error while setting the email content.
+     */
     public void setContent(String body) throws MessagingException {
         message.setContent(body, "text/html");
     }
 
+    /**
+     * Sends the email message.
+     *
+     * @throws EmailException If there is an error while sending the email.
+     */
     public void send() throws EmailException {
-        synchronized (MailProvider.class){
+        synchronized (MailProvider.class) {
             try {
                 Transport.send(message);
             } catch (MessagingException e) {

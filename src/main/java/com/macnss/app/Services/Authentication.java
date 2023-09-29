@@ -36,7 +36,7 @@ public class Authentication {
                 if (AuthenticationHelpers.checkPassword(password, administrator.getPassword())) {
                     int code = AuthenticationHelpers.generateRandomCode(6);
                     try (VerificationAdministratorsCodesDao codeDao = new VerificationAdministratorsCodesDao()) {
-                        if (codeDao.create(administrator.getAdministrator_id(), AuthenticationHelpers.hashPassword( String.valueOf(code) ))) {
+                        if (codeDao.create(administrator.getAdministrator_id(), AuthenticationHelpers.hashPassword(String.valueOf(code)))) {
                             EmailService emailService = new EmailService(administrator.getEmail(), "Authentication Admin Code");
                             Thread emailThread = new Thread(emailService);
                             emailService.setText("Your code is: " + code);
