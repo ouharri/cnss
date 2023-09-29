@@ -59,7 +59,7 @@ public class EmailService implements Runnable {
      * @throws EmailException If there is an error while sending the email.
      */
     public void send() throws EmailException {
-        synchronized (MailProvider.class) {
+        synchronized (EmailService.class) {
             try {
                 Transport.send(message);
             } catch (MessagingException e) {
