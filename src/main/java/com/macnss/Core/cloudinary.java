@@ -14,17 +14,17 @@ public class cloudinary {
     private cloudinary() {
     }
 
-    /**
-     * Initializes the Cloudinary client instance.
-     */
     static {
         if (cloudinary == null) {
             synchronized (cloudinary.class) {
                 if (cloudinary == null) {
-                    cloudinary = new Cloudinary(ObjectUtils.asMap(
-                            "cloud_name", env.get("CLOUDINARY_CLOUD_NAME"),
-                            "api_key", env.get("CLOUDINARY_API_KEY"),
-                            "api_secret", env.get("CLOUDINARY_API_SECRET")));
+                    cloudinary = new Cloudinary(
+                            ObjectUtils.asMap(
+                                    "cloud_name", env.get("CLOUDINARY_CLOUD_NAME"),
+                                    "api_key", env.get("CLOUDINARY_API_KEY"),
+                                    "api_secret", env.get("CLOUDINARY_API_SECRET")
+                            )
+                    );
                 }
             }
         }

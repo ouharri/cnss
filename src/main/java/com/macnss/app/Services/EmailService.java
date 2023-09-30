@@ -40,7 +40,11 @@ public class EmailService implements Runnable {
      * @throws MessagingException If there is an error while setting the email content.
      */
     public void setText(String body) throws MessagingException {
-        message.setText(body);
+        try {
+            message.setText(body);
+        } catch (Exception e) {
+            throw new MessagingException("Error setting email content.", e);
+        }
     }
 
     /**
@@ -50,7 +54,11 @@ public class EmailService implements Runnable {
      * @throws MessagingException If there is an error while setting the email content.
      */
     public void setContent(String body) throws MessagingException {
-        message.setContent(body, "text/html");
+        try {
+            message.setContent(body, "text/html");
+        } catch (Exception e) {
+            throw new MessagingException("Error setting email content.", e);
+        }
     }
 
     /**

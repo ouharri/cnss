@@ -29,7 +29,7 @@ public class database {
                                 env.get("DB_PASSWORD")
                         );
                     } catch (ClassNotFoundException | SQLException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -52,7 +52,7 @@ public class database {
                 connection = null;
                 return connection;
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
         return null;

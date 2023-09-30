@@ -3,6 +3,7 @@ package com.macnss.Core;
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -13,6 +14,11 @@ import java.util.Properties;
  */
 public class MailProvider {
 
+    /**
+     * -- GETTER --
+     * Retrieves the JavaMail Session for sending emails.
+     */
+    @Getter
     private static volatile Session mailSession = null;
 
     static {
@@ -20,8 +26,7 @@ public class MailProvider {
             synchronized (MailProvider.class) {
                 if (mailSession == null) {
                     try {
-                        Properties emailProperties = loadEmailProperties();
-                        mailSession = Session.getInstance(emailProperties, new Authenticator() {
+                        mailSession = Session.getInstance(loadEmailProperties(), new Authenticator() {
                             @Override
                             protected PasswordAuthentication getPasswordAuthentication() {
                                 return new PasswordAuthentication(
@@ -39,14 +44,11 @@ public class MailProvider {
     }
 
     /**
-     * Retrieves the JavaMail Session for sending emails.
+     * Loads the email properties from the environment variables.
      *
-     * @return The JavaMail Session instance.
+     * @return The email properties.
+     * @throws IOException If an error occurs while loading the properties.
      */
-    public static Session getMailSession() {
-        return mailSession;
-    }
-
     private static Properties loadEmailProperties() throws IOException {
         Properties properties = new Properties();
 

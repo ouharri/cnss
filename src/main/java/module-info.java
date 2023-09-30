@@ -13,11 +13,11 @@ module com.biblio {
     requires java.sql;
     requires org.postgresql.jdbc;
     requires java.desktop;
-    requires jakarta.mail;
     requires jbcrypt;
     requires cloudinary.http44;
     requires cloudinary.core;
     requires jcalendar;
+    requires jakarta.mail;
 
     opens com.macnss to javafx.fxml;
     exports com.macnss;
