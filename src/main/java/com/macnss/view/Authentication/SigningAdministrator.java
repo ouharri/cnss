@@ -1,5 +1,6 @@
 package com.macnss.view.Authentication;
 
+import com.macnss.app.Models.user.Administrator;
 import com.macnss.app.Services.Authentication;
 import com.macnss.dao.AdministratorDao;
 import com.macnss.view.Administrator.index;
@@ -166,7 +167,7 @@ public class SigningAdministrator extends JFrame implements ActionListener {
             }
             String code = code1.getText() + code2.getText() + code3.getText() + code4.getText() + code5.getText() + code6.getText();
             if (auth.authenticateAdministrator(code, enteredUsername, enteredPassword)) {
-                try (AdministratorDao admin = new AdministratorDao()) {
+                try (AdministratorDao admin = new AdministratorDao(new Administrator())) {
                     admin.get(enteredUsername).ifPresent(Admin -> {
                         JOptionPane.showMessageDialog(this, "Welcome " + Admin.getFullName() + " !", "Success", JOptionPane.INFORMATION_MESSAGE);
                         try {

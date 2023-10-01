@@ -1,5 +1,6 @@
 package com.macnss.view.Authentication;
 
+import com.macnss.app.Models.user.AgentCNSS;
 import com.macnss.app.Services.Authentication;
 import com.macnss.dao.AgentCNSSDao;
 import com.macnss.view.Agent.index;
@@ -167,7 +168,7 @@ public class SigningAgentCNS extends JFrame implements ActionListener {
             }
             String code = code1.getText() + code2.getText() + code3.getText() + code4.getText() + code5.getText() + code6.getText();
             if (auth.authenticateAgentCNSS(code, enteredUsername, enteredPassword)) {
-                try (AgentCNSSDao agent = new AgentCNSSDao()) {
+                try (AgentCNSSDao agent = new AgentCNSSDao(new AgentCNSS())) {
                     agent.get(enteredUsername).ifPresent(agentCNSS -> {
                         JOptionPane.showMessageDialog(this, "Welcome " + agentCNSS.getFullName(), "Success", JOptionPane.INFORMATION_MESSAGE);
                         try {

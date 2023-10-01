@@ -11,11 +11,7 @@ import java.util.Optional;
 
 public class PatientsDao extends Model {
 
-    private Patient patient = new Patient();
-
-    public PatientsDao() {
-        super("patients", new String[]{"matriculate"});
-    }
+    private final Patient patient;
 
     public PatientsDao(Patient patient) {
         super("patients", new String[]{"matriculate"});

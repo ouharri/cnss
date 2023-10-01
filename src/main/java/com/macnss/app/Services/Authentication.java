@@ -29,7 +29,7 @@ public class Authentication {
      * @return true if authentication is successful, false otherwise.
      */
     public boolean preAuthenticateAdministrator(String username, String password) {
-        try (AdministratorDao dao = new AdministratorDao()) {
+        try (AdministratorDao dao = new AdministratorDao(new Administrator())) {
             Optional<Administrator> adminOptional = dao.get(username);
             if (adminOptional.isPresent()) {
                 Administrator administrator = adminOptional.get();
@@ -68,7 +68,7 @@ public class Authentication {
      * @return true if authentication is successful, false otherwise.
      */
     public boolean authenticateAdministrator(String code, String username, String password) {
-        try (AdministratorDao dao = new AdministratorDao()) {
+        try (AdministratorDao dao = new AdministratorDao(new Administrator())) {
             Optional<Administrator> adminOptional = dao.get(username);
             if (adminOptional.isPresent()) {
                 Administrator administrator = adminOptional.get();
@@ -94,7 +94,7 @@ public class Authentication {
      * @return true if pre-authentication is successful, false otherwise.
      */
     public boolean preAuthenticateAgentCNSS(String username, String password) {
-        try (AgentCNSSDao dao = new AgentCNSSDao()) {
+        try (AgentCNSSDao dao = new AgentCNSSDao(new AgentCNSS())) {
             Optional<AgentCNSS> agentOptional = dao.get(username);
             if (agentOptional.isPresent()) {
                 AgentCNSS agentCNSS = agentOptional.get();
@@ -133,7 +133,7 @@ public class Authentication {
      * @return true if authentication is successful, false otherwise.
      */
     public boolean authenticateAgentCNSS(String code, String username, String password) {
-        try (AgentCNSSDao dao = new AgentCNSSDao()) {
+        try (AgentCNSSDao dao = new AgentCNSSDao(new AgentCNSS())) {
             Optional<AgentCNSS> agentOptional = dao.get(username);
             if (agentOptional.isPresent()) {
                 AgentCNSS agentCNSS = agentOptional.get();

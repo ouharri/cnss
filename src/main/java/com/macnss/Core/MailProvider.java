@@ -51,12 +51,10 @@ public class MailProvider {
      */
     private static Properties loadEmailProperties() throws IOException {
         Properties properties = new Properties();
-
         properties.put("mail.smtp.auth", env.get("MAIL_SMTP_AUTH"));
         properties.put("mail.smtp.host", env.get("MAIL_HOST"));
         properties.put("mail.smtp.port", env.get("MAIL_PORT"));
         properties.put("mail.smtp.starttls.enable", env.get("MAIL_SMTP_STARTTLS_ENABLE"));
-
         return properties;
     }
 }

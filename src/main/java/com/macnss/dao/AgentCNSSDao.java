@@ -18,14 +18,7 @@ import java.util.Optional;
  */
 public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
 
-    private AgentCNSS agentCnss = new AgentCNSS();
-
-    /**
-     * Constructs a new AgentCNSSDao with default settings.
-     */
-    public AgentCNSSDao() {
-        super("agents_cnss", new String[]{"agent_id"});
-    }
+    private final AgentCNSS agentCnss;
 
     public AgentCNSSDao(AgentCNSS agent) {
         super("agents_cnss", new String[]{"agent_id"});

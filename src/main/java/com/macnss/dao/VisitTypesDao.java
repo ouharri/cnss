@@ -11,11 +11,7 @@ import java.util.Optional;
 
 public class VisitTypesDao extends Model implements Dao<VisitType> {
 
-    private VisitType visitTypes = new VisitType();
-
-    public VisitTypesDao() {
-        super("visit_types", new String[]{"visit_type_id"});
-    }
+    private final VisitType visitTypes;
 
     public VisitTypesDao(VisitType visitTypes) {
         super("visit_types", new String[]{"visit_type_id"});

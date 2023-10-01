@@ -17,14 +17,7 @@ import java.util.Optional;
  */
 public class AdministratorDao extends Model implements Dao<Administrator> {
 
-    private Administrator administrator = new Administrator();
-
-    /**
-     * Constructs a new AdministratorDao with default settings.
-     */
-    public AdministratorDao() {
-        super("administrators", new String[]{"administrator_id"});
-    }
+    private final Administrator administrator;
 
     /**
      * Constructs a new AdministratorDao with a specified Administrator entity.
@@ -213,6 +206,6 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
      */
     @Override
     public boolean delete(Administrator administrator) {
-        return super.delete(new String[]{String.valueOf(administrator.getAdministrator_id())});
+        return super.delete(new Object[]{administrator.getAdministrator_id()});
     }
 }

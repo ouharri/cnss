@@ -1,6 +1,5 @@
 package com.macnss.Libs;
 
-import com.macnss.Administrator;
 import com.macnss.Core.database;
 
 import java.sql.*;
@@ -103,7 +102,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
                 resultList.add(rowData);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return resultList;
     }
@@ -157,7 +156,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
                 resultList.add(rowData);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return resultList;
     }
@@ -256,7 +255,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
                 return rowData;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -314,7 +313,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
                 return rowData;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -345,7 +344,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
                 return resultSet.getInt("count");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return 0;
     }
@@ -390,7 +389,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
                 resultList.add(rowData);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return resultList;
     }
@@ -445,7 +444,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
                 resultList.add(rowData);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return resultList;
     }

@@ -223,7 +223,7 @@ public class index extends JFrame implements ActionListener {
         scrollPane.setBounds(400, 190, 1000, 550);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
-        try (AgentCNSSDao dao = new AgentCNSSDao()) {
+        try (AgentCNSSDao dao = new AgentCNSSDao(new AgentCNSS())) {
             List<AgentCNSS> agents = dao.getAll();
             addAgentsToTable(agents);
         } catch (Exception ex) {
