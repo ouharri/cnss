@@ -15,14 +15,18 @@ import java.util.Map;
 @Data
 public abstract class User {
 
-    protected String cnie;
-    protected String firstName;
-    protected String lastName;
-    protected String email;
-    protected Date birthday;
-    protected String phone;
-    protected Gender gender;
-    protected String password;
+    protected String cnie = null;
+    protected String firstName = null;
+    protected String lastName = null;
+    protected String email = null;
+    protected Date birthday = null;
+    protected String phone = null;
+    protected Gender gender = null;
+    protected String password = null;
+    protected String address = null;
+    protected String city = null;
+    protected String country = null;
+    protected String postal_code = null;
     protected java.sql.Timestamp delete_at = null;
 
     /**
@@ -40,20 +44,24 @@ public abstract class User {
         if (this.phone != null) userData.put("phone", this.phone);
         if (this.gender != null) userData.put("gender", this.gender);
         if (this.password != null) userData.put("pwd_hash", this.password);
+        if (this.address != null) userData.put("address", this.address);
+        if (this.city != null) userData.put("city", this.city);
+        if (this.country != null) userData.put("country", this.country);
+        if (this.postal_code != null) userData.put("postalCode", this.postal_code);
         return userData;
     }
 
     /**
      * Sets user information.
      *
-     * @param cnie     The CNIE of the user.
+     * @param cnie      The CNIE of the user.
      * @param firstName The first name of the user.
      * @param lastName  The last name of the user.
      * @param birthday  The birthday of the user.
-     * @param gender   The gender of the user.
-     * @param email    The email address of the user.
-     * @param phone    The phone number of the user.
-     * @param password The password of the user.
+     * @param gender    The gender of the user.
+     * @param email     The email address of the user.
+     * @param phone     The phone number of the user.
+     * @param password  The password of the user.
      */
     public void setUser(String cnie, String firstName, String lastName, Date birthday, Gender gender, String email, String phone, String password) {
         this.cnie = cnie;
@@ -86,6 +94,15 @@ public abstract class User {
      */
     public String getFullName() {
         return this.firstName + " " + this.lastName;
+    }
+
+    /**
+     * Gets the full address of the user.
+     *
+     * @return The full address of the user.
+     */
+    public String getFullAddress() {
+        return this.address + ",\n" + this.city + ", " + this.postal_code + ",\n" + this.country;
     }
 
     /**
