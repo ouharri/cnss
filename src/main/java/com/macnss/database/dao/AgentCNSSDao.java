@@ -1,4 +1,4 @@
-package com.macnss.dao;
+package com.macnss.database.dao;
 
 import com.macnss.Libs.Model;
 import com.macnss.app.Enums.AgentStatus;
@@ -166,12 +166,31 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
     }
 
     /**
+     * Updates an entity based on certain criteria.
+     *
+     * @return An optional containing the updated entity, or an empty optional if there's an error.
+     */
+    public Optional<AgentCNSS> update() {
+        return Optional.empty();
+    }
+
+    /**
+     * Finds all entities based on certain criteria.
+     *
+     * @param criteria The search criteria.
+     * @return A list of entities that match the criteria.
+     */
+    @Override
+    public List<AgentCNSS> find(Object criteria) {
+        return null;
+    }
+
+    /**
      * Finds all AgentCNSS entities based on a search criteria.
      *
      * @param criteria The search criteria.
      * @return A list of AgentCNSS entities that match the criteria.
      */
-    @Override
     public List<AgentCNSS> find(String criteria) {
         List<AgentCNSS> agentsCNSS = new ArrayList<>();
 
@@ -209,5 +228,14 @@ public class AgentCNSSDao extends Model implements Dao<AgentCNSS> {
     @Override
     public boolean delete(AgentCNSS agent) {
         return super.delete(new String[]{String.valueOf(agent.getAgentCNSS())});
+    }
+
+    /**
+     * Deletes an entity based on certain criteria.
+     *
+     * @return True if the deletion is successful, otherwise false.
+     */
+    public boolean delete() {
+        return false;
     }
 }

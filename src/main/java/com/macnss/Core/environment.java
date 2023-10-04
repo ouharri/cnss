@@ -9,14 +9,14 @@ import java.util.Map;
 /**
  * The `env` class provides access to environment variables loaded from a .env file.
  */
-public class env {
+public class environment {
     private static final Map<String, String> envVariables = new HashMap<>();
 
-    private env() {
+    private environment() {
     }
 
     static {
-        synchronized (env.class) {
+        synchronized (environment.class) {
             if (envVariables.isEmpty()) {
                 String filePath = ".env";
 

@@ -1,5 +1,6 @@
-package com.macnss.Core;
+package com.macnss.app.Providers;
 
+import com.macnss.Core.environment;
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
@@ -30,8 +31,8 @@ public class MailProvider {
                             @Override
                             protected PasswordAuthentication getPasswordAuthentication() {
                                 return new PasswordAuthentication(
-                                        env.get("MAIL_USERNAME"),
-                                        env.get("MAIL_PASSWORD")
+                                        environment.get("MAIL_USERNAME"),
+                                        environment.get("MAIL_PASSWORD")
                                 );
                             }
                         });
@@ -51,10 +52,10 @@ public class MailProvider {
      */
     private static Properties loadEmailProperties() throws IOException {
         Properties properties = new Properties();
-        properties.put("mail.smtp.auth", env.get("MAIL_SMTP_AUTH"));
-        properties.put("mail.smtp.host", env.get("MAIL_HOST"));
-        properties.put("mail.smtp.port", env.get("MAIL_PORT"));
-        properties.put("mail.smtp.starttls.enable", env.get("MAIL_SMTP_STARTTLS_ENABLE"));
+        properties.put("mail.smtp.auth", environment.get("MAIL_SMTP_AUTH"));
+        properties.put("mail.smtp.host", environment.get("MAIL_HOST"));
+        properties.put("mail.smtp.port", environment.get("MAIL_PORT"));
+        properties.put("mail.smtp.starttls.enable", environment.get("MAIL_SMTP_STARTTLS_ENABLE"));
         return properties;
     }
 }

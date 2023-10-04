@@ -2,7 +2,7 @@ package com.macnss.view.Authentication;
 
 import com.macnss.app.Models.user.Administrator;
 import com.macnss.app.Services.Authentication;
-import com.macnss.dao.AdministratorDao;
+import com.macnss.database.dao.AdministratorDao;
 import com.macnss.view.Administrator.index;
 
 import javax.swing.*;

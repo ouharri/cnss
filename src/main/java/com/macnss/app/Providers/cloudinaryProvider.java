@@ -1,28 +1,29 @@
-package com.macnss.Core;
+package com.macnss.app.Providers;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.macnss.Core.environment;
 
 /**
  * The Cloudinary class provides a centralized instance of the Cloudinary client
  * for interacting with the Cloudinary service.
  */
-public class cloudinary {
+public class cloudinaryProvider {
 
     private static volatile Cloudinary cloudinary = null;
 
-    private cloudinary() {
+    private cloudinaryProvider() {
     }
 
     static {
         if (cloudinary == null) {
-            synchronized (cloudinary.class) {
+            synchronized (cloudinaryProvider.class) {
                 if (cloudinary == null) {
                     cloudinary = new Cloudinary(
                             ObjectUtils.asMap(
-                                    "cloud_name", env.get("CLOUDINARY_CLOUD_NAME"),
-                                    "api_key", env.get("CLOUDINARY_API_KEY"),
-                                    "api_secret", env.get("CLOUDINARY_API_SECRET")
+                                    "cloud_name", environment.get("CLOUDINARY_CLOUD_NAME"),
+                                    "api_key", environment.get("CLOUDINARY_API_KEY"),
+                                    "api_secret", environment.get("CLOUDINARY_API_SECRET")
                             )
                     );
                 }

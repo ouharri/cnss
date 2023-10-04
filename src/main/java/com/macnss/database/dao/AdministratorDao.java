@@ -1,4 +1,4 @@
-package com.macnss.dao;
+package com.macnss.database.dao;
 
 import com.macnss.Libs.Model;
 import com.macnss.app.Enums.Gender;
@@ -166,12 +166,32 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
     }
 
     /**
+     * Updates an entity based on certain criteria.
+     *
+     * @return An optional containing the updated entity, or an empty optional if there's an error.
+     */
+    @Override
+    public Optional<Administrator> update() {
+        return Optional.empty();
+    }
+
+    /**
+     * Finds all entities based on certain criteria.
+     *
+     * @param criteria The search criteria.
+     * @return A list of entities that match the criteria.
+     */
+    @Override
+    public List<Administrator> find(Object criteria) {
+        return null;
+    }
+
+    /**
      * Finds all Administrator entities based on a search criteria.
      *
      * @param criteria The search criteria.
      * @return A list of Administrator entities that match the criteria.
      */
-    @Override
     public List<Administrator> find(String criteria) {
         List<Administrator> Administrators = new ArrayList<>();
 
@@ -207,5 +227,15 @@ public class AdministratorDao extends Model implements Dao<Administrator> {
     @Override
     public boolean delete(Administrator administrator) {
         return super.delete(new Object[]{administrator.getAdministrator_id()});
+    }
+
+    /**
+     * Deletes an entity based on certain criteria.
+     *
+     * @return True if the deletion is successful, otherwise false.
+     */
+    @Override
+    public boolean delete() {
+        return false;
     }
 }

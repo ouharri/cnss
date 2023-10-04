@@ -1,4 +1,4 @@
-package com.macnss.dao;
+package com.macnss.database.dao;
 
 import com.macnss.Libs.Model;
 import com.macnss.app.Models.Static.Medicine;

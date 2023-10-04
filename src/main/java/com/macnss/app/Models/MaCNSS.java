@@ -11,7 +11,6 @@ import java.util.List;
 public class MaCNSS {
 
 	private List<AgentCNSS> agents;
-
 	private List<com.macnss.app.Models.user.Administrator> Administrator;
 
 }

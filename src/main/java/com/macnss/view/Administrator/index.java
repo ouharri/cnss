@@ -5,7 +5,7 @@ import com.macnss.app.Enums.Gender;
 import com.macnss.app.Models.user.Administrator;
 import com.macnss.app.Models.user.AgentCNSS;
 import com.macnss.app.Services.EmailService;
-import com.macnss.dao.AgentCNSSDao;
+import com.macnss.database.dao.AgentCNSSDao;
 import com.macnss.helpers.AuthenticationHelpers;
 import com.macnss.view.Authentication.SigningAgentCNS;
 

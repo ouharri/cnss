@@ -2,7 +2,7 @@ package com.macnss.view.Authentication;
 
 import com.macnss.app.Models.user.AgentCNSS;
 import com.macnss.app.Services.Authentication;
-import com.macnss.dao.AgentCNSSDao;
+import com.macnss.database.dao.AgentCNSSDao;
 import com.macnss.view.Agent.index;
 
 import javax.swing.*;

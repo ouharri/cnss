@@ -78,6 +78,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
     @Override
     public List<Map<String, Object>> retrieveAll() {
         List<Map<String, Object>> resultList = new ArrayList<>();
+
         try {
             String query = "SELECT * FROM " + this._table;
 
@@ -116,6 +117,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
      */
     public List<Map<String, Object>> search(String keyword, String[] columns) {
         List<Map<String, Object>> resultList = new ArrayList<>();
+
         try {
             StringBuilder queryBuilder = new StringBuilder();
             queryBuilder.append("SELECT * FROM ").append(this._table).append(" WHERE ");
@@ -327,7 +329,6 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
      * @return The count of records matching the specified column value.
      */
     public int getColumnCount(String WhereColumnName, String value) {
-        System.out.println(this._softDelete);
         try {
             String query = "SELECT count(*) AS count FROM " + this._table + " WHERE " + WhereColumnName + " = ?";
 
@@ -358,6 +359,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
      */
     public List<Map<String, Object>> readAll(String columnName, Object value) {
         List<Map<String, Object>> resultList = new ArrayList<>();
+
         try {
             String query = "SELECT * FROM " + this._table + " WHERE " + columnName + " = ?";
 
@@ -402,6 +404,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
      */
     public List<Map<String, Object>> readAll(Object[] ids) {
         List<Map<String, Object>> resultList = new ArrayList<>();
+
         try {
             StringBuilder whereClause = new StringBuilder();
             for (int i = 0; i < _primaryKey.length; i++) {
@@ -473,7 +476,7 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
                 }
             }
 
-            String query = "UPDATE " + _table + " SET " + setClause.toString() + " WHERE " + whereClause.toString();
+            String query = "UPDATE " + this._table + " SET " + setClause + " WHERE " + whereClause;
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
 
             int index = 1;
@@ -496,7 +499,6 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -550,7 +552,6 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
      */
     public boolean softDelete(Object[] ids) {
         try {
-
             String query = "UPDATE " + _table + " SET " + "delete_at = ?" + " WHERE ";
 
             StringBuilder whereClause = new StringBuilder();
@@ -578,7 +579,6 @@ public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }

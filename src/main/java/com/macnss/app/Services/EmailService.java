@@ -1,7 +1,7 @@
 package com.macnss.app.Services;
 
-import com.macnss.Core.MailProvider;
-import com.macnss.Core.env;
+import com.macnss.app.Providers.MailProvider;
+import com.macnss.Core.environment;
 
 import com.macnss.app.Exceptions.EmailException;
 import jakarta.mail.*;
@@ -25,7 +25,7 @@ public class EmailService implements Runnable {
     public EmailService(String recipient, String subject) {
         message = new MimeMessage(MailProvider.getMailSession());
         try {
-            message.setFrom(new InternetAddress(env.get("MAIL_SMTP_FROM")));
+            message.setFrom(new InternetAddress(environment.get("MAIL_SMTP_FROM")));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
             message.setSubject(subject);
         } catch (MessagingException e) {

@@ -22,11 +22,11 @@ public class database {
             synchronized (database.class) {
                 if (connection == null) {
                     try {
-                        Class.forName(env.get("JDBC_DRIVER"));
+                        Class.forName(environment.get("JDBC_DRIVER"));
                         connection = DriverManager.getConnection(
-                                env.get("DB_URL"),
-                                env.get("DB_USERNAME"),
-                                env.get("DB_PASSWORD")
+                                environment.get("DB_URL"),
+                                environment.get("DB_USERNAME"),
+                                environment.get("DB_PASSWORD")
                         );
                     } catch (ClassNotFoundException | SQLException e) {
                         throw new RuntimeException(e);

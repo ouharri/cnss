@@ -2,10 +2,10 @@ package com.macnss.app.Services;
 
 import com.macnss.app.Models.user.Administrator;
 import com.macnss.app.Models.user.AgentCNSS;
-import com.macnss.dao.AdministratorDao;
-import com.macnss.dao.AgentCNSSDao;
-import com.macnss.dao.VerificationAdministratorsCodesDao;
-import com.macnss.dao.VerificationAgentCNSSCodesDao;
+import com.macnss.database.dao.AdministratorDao;
+import com.macnss.database.dao.AgentCNSSDao;
+import com.macnss.database.dao.VerificationAdministratorsCodesDao;
+import com.macnss.database.dao.VerificationAgentCNSSCodesDao;
 import com.macnss.helpers.AuthenticationHelpers;
 
 import java.util.Optional;
