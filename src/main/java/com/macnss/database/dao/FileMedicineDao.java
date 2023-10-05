@@ -30,5 +30,5 @@ public class FileMedicineDao extends Model {
         }
     }
 
-    // Ajoutez ici d'autres méthodes spécifiques si nécessaire
+
 }
