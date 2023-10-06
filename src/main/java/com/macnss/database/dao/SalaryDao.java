@@ -1,7 +1,6 @@
 package com.macnss.database.dao;
 
 import com.macnss.Libs.Model;
-import com.macnss.app.Enums.Gender;
 import com.macnss.app.Enums.Month;
 import com.macnss.app.Models.EmployeeCompany;
 import com.macnss.app.Models.Salary;

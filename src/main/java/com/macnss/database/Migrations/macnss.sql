@@ -48,6 +48,9 @@ DROP TABLE IF EXISTS administrators;
 DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS abstract_users;
 
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- Define an ENUM type for gender
 CREATE TYPE Gender AS ENUM ('MALE', 'FEMALE');
 
@@ -89,12 +92,12 @@ CREATE TABLE employees
 
 CREATE TABLE administrators
 (
-    administrator_id SERIAL PRIMARY KEY
+    administrator_id uuid DEFAULT uuid_generate_v4 () PRIMARY KEY
 ) INHERITS (employees);
 
 CREATE TABLE agents_cnss
 (
-    agent_id SERIAL PRIMARY KEY
+    agent_id uuid DEFAULT uuid_generate_v4 () PRIMARY KEY
 ) INHERITS (employees);
 
 CREATE TABLE abstract_verification_codes
@@ -115,7 +118,7 @@ CREATE TABLE verification_agents_cnss_codes
 
 CREATE TABLE abstract_authentication_history
 (
-    authentication_id SERIAL PRIMARY KEY,
+    authentication_id uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     authenticated_at  TIMESTAMP           DEFAULT CURRENT_TIMESTAMP,
     auth_status       AuthStatus NOT NULL DEFAULT 'SUCCESS'
 );
@@ -138,7 +141,7 @@ CREATE TABLE patients
 
 CREATE TABLE refund_files
 (
-    refund_file_id      SERIAL PRIMARY KEY,
+    refund_file_id      uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     matriculate         VARCHAR(255)   NOT NULL UNIQUE, -- Unique matriculation number for refund files
     patient_matriculate VARCHAR(255)   NOT NULL,
     file_status         FileStatus     NOT NULL,        -- File status
@@ -148,7 +151,7 @@ CREATE TABLE refund_files
 
 CREATE TABLE refund_history
 (
-    refund_history_id SERIAL PRIMARY KEY,
+    refund_history_id uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     refund_file_id    INT NOT NULL,
     validation_date   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     refund_amount     DECIMAL(10, 2),
@@ -158,7 +161,7 @@ CREATE TABLE refund_history
 -- Documents table and its associated tables
 CREATE TABLE abstract_documents
 (
-    document_id  SERIAL PRIMARY KEY,
+    document_id  uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     code         VARCHAR(150) NOT NULL UNIQUE,
     description  VARCHAR(150),
     paid_price   DECIMAL(10, 2),
@@ -168,28 +171,28 @@ CREATE TABLE abstract_documents
 -- Tables for document types (Scanner, Visit, Radio, Analysis)
 CREATE TABLE scanner_types
 (
-    scanner_type_id            SERIAL PRIMARY KEY,
+    scanner_type_id            uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     scanner_type               VARCHAR(200) UNIQUE, -- Scanner type name
     scanner_reimbursement_rate DECIMAL(5, 2)        -- Reimbursement rate for scanner
 );
 
 CREATE TABLE visit_types
 (
-    visit_type_id            SERIAL PRIMARY KEY,
+    visit_type_id            uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     visit_type               VARCHAR(200) UNIQUE, -- Visit type name
     visit_reimbursement_rate DECIMAL(5, 2)        -- Reimbursement rate for visit
 );
 
 CREATE TABLE radio_types
 (
-    radio_type_id            SERIAL PRIMARY KEY,
+    radio_type_id            uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     radio_type               VARCHAR(200) UNIQUE, -- Radio type name
     radio_reimbursement_rate DECIMAL(5, 2)        -- Reimbursement rate for radio
 );
 
 CREATE TABLE analysis_types
 (
-    analysis_type_id            SERIAL PRIMARY KEY,
+    analysis_type_id            uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     analysis_type               VARCHAR(200) UNIQUE, -- Analysis type name
     analysis_reimbursement_rate DECIMAL(5, 2)        -- Reimbursement rate for analysis
 );
@@ -235,7 +238,7 @@ CREATE TABLE medicine_barcodes
 -- Tables for scanner, visit, radio, and analysis information
 CREATE TABLE scanners_documents
 (
-    scanner_id      SERIAL PRIMARY KEY,
+    scanner_id      uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     scanner_type_id INT  NOT NULL,
     scanner_date    DATE NOT NULL,
     scanner_result  VARCHAR(250),
@@ -247,7 +250,7 @@ CREATE TABLE scanners_documents
 
 CREATE TABLE visits_documents
 (
-    visit_id       SERIAL PRIMARY KEY,
+    visit_id       uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     visit_type_id  INT  NOT NULL,
     physician      VARCHAR(150),
     visit_date     DATE NOT NULL,
@@ -260,7 +263,7 @@ CREATE TABLE visits_documents
 
 CREATE TABLE radios_documents
 (
-    radio_id       SERIAL PRIMARY KEY,
+    radio_id       uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     radio_type_id  INT  NOT NULL,
     radiologist    VARCHAR(200),
     radio_date     DATE NOT NULL,
@@ -273,7 +276,7 @@ CREATE TABLE radios_documents
 
 CREATE TABLE analytics_documents
 (
-    analytical_id    SERIAL PRIMARY KEY,
+    analytical_id    uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
     analysis_type_id INT  NOT NULL,
     laboratory       VARCHAR(200),
     lab_address      VARCHAR(200),
@@ -285,7 +288,7 @@ CREATE TABLE analytics_documents
 
 CREATE TABLE company
 (
-    company_id SERIAL PRIMARY KEY,
+    company_id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     name       VARCHAR(200) NOT NULL,
     address    VARCHAR(200) NOT NULL,
     city       VARCHAR(200) NOT NULL,
@@ -298,17 +301,20 @@ CREATE TABLE company
 
 CREATE TABLE employees
 (
-    employee_id SERIAL PRIMARY KEY
+    employee_id uuid DEFAULT uuid_generate_v4 () PRIMARY KEY
 ) INHERITS (abstract_users);
 
 CREATE TABLE employees_company
 (
-    employee_company_id SERIAL PRIMARY KEY,
     employee            employees,
     company             company,
+    employee_type       employeeType NOT NULL,
+    start_date          DATE         NOT NULL,
+    end_date            DATE,
     salary              DECIMAL(10, 4) NOT NULL,
-    contribution        DECIMAL(10, 2) NOT NULL
-) INHERITS (abstract_users);
+    contribution        DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY (employee, company,end_date)
+);
 
 CREATE TABLE salary
 (
@@ -316,5 +322,6 @@ CREATE TABLE salary
     work_month       month NOT NULL,
     work_year        year  NOT NULL,
     work_day         INT   NOT NULL DEFAULT 26,
+    salaryObtained   DECIMAL(10, 4) NOT NULL,
     PRIMARY KEY (employee_company, work_month, work_year)
 );

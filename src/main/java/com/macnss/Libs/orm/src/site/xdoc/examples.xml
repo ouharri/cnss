@@ -1,0 +1,269 @@
+<?xml version="1.0"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+ <properties>
+    <title>JDBC Utility Component -- Examples</title>
+ </properties>
+
+<body>
+
+<section name="DbUtils: JDBC Utility Component Examples">
+<p>
+This page provides examples that show how DbUtils may be used.
+</p>
+</section>
+
+<section name="Basic Usage">
+<p>
+DbUtils is a very small library of classes so it won't take long 
+to go through the <a href="apidocs/">javadocs</a> for each class.  
+The core classes/interfaces in DbUtils are 
+<code><a href="apidocs/org/apache/commons/dbutils/QueryRunner.html">QueryRunner</a></code>
+and
+<code><a href="apidocs/org/apache/commons/dbutils/ResultSetHandler.html">ResultSetHandler</a></code>.
+You don't need to know about any other DbUtils classes to benefit from using the 
+library.  The following example demonstrates how these classes are used together.
+</p>
+
+<source>
+<![CDATA[
+// Create a ResultSetHandler implementation to convert the
+// first row into an Object[].
+ResultSetHandler<Object[]> h = new ResultSetHandler<Object[]>() {
+    public Object[] handle(ResultSet rs) throws SQLException {
+        if (!rs.next()) {
+            return null;
+        }
+    
+        ResultSetMetaData meta = rs.getMetaData();
+        int cols = meta.getColumnCount();
+        Object[] result = new Object[cols];
+
+        for (int i = 0; i < cols; i++) {
+            result[i] = rs.getObject(i + 1);
+        }
+
+        return result;
+    }
+};
+
+// Create a QueryRunner that will use connections from
+// the given DataSource
+QueryRunner run = new QueryRunner(dataSource);
+
+// Execute the query and get the results back from the handler
+Object[] result = run.query(
+    "SELECT * FROM Person WHERE name=?", h, "John Doe");
+]]>
+</source>
+
+
+<p>
+You could also perform the previous query using a <code>java.sql.Connection</code> object
+instead of a <code>DataSource</code>.  Notice that you are responsible for closing the
+<code>Connection</code> in this example.
+</p>
+<source>
+<![CDATA[
+ResultSetHandler<Object[]> h = ... // Define a handler the same as above example
+
+// No DataSource so we must handle Connections manually
+QueryRunner run = new QueryRunner();
+
+Connection conn = ... // open a connection
+try{
+    Object[] result = run.query(
+        conn, "SELECT * FROM Person WHERE name=?", h, "John Doe");
+    // do something with the result
+} finally {
+    // Use this helper method so we don't have to check for null
+    DbUtils.close(conn);  
+}
+]]>
+</source>
+
+<p>
+  You can not only fetch data from the database - you can also insert or update
+  data. The following example will first insert a person into the database and
+  after that change the person's height. 
+</p>
+
+<source>
+<![CDATA[
+QueryRunner run = new QueryRunner( dataSource );
+try
+{
+    // Execute the SQL update statement and return the number of
+    // inserts that were made
+    int inserts = run.update( "INSERT INTO Person (name,height) VALUES (?,?)",
+                              "John Doe", 1.82 );
+    // The line before uses varargs and autoboxing to simplify the code
+
+    // Now it's time to rise to the occation...
+    int updates = run.update( "UPDATE Person SET height=? WHERE name=?",
+                              2.05, "John Doe" );
+    // So does the line above
+}
+catch(SQLException sqle) {
+    // Handle it
+}
+]]>
+</source>
+
+<p>
+  For long running calls you can use the <code>AsyncQueryRunner</code> to execute
+  the calls asynchronously. The <code>AsyncQueryRunner</code> class has the same
+  methods as the <code>QueryRunner</code> calls; however, the methods return a
+  <code>Callable</code>. 
+</p>
+
+<source>
+<![CDATA[
+ExecutorCompletionService<Integer> executor =
+    new ExecutorCompletionService<Integer>( Executors.newCachedThreadPool() );
+AsyncQueryRunner asyncRun = new AsyncQueryRunner( dataSource );
+
+try
+{
+    // Create a Callable for the update call
+    Callable<Integer> callable = asyncRun.update( "UPDATE Person SET height=? WHERE name=?",
+                                                  2.05, "John Doe" );
+    // Submit the Callable to the executor
+    executor.submit( callable );
+} catch(SQLException sqle) {
+    // Handle it
+}
+
+// Sometime later (or in another thread)
+try
+{
+   // Get the result of the update
+   Integer updates = executor.take().get();
+} catch(InterruptedException ie) {
+    // Handle it
+}
+]]>
+</source>
+
+
+</section>
+
+
+<section name="ResultSetHandler Implementations">
+<p>
+In the examples above we implemented the <code>ResultSetHandler</code> interface
+to turn the first row of the <code>ResultSet</code> into an Object[].  This is a
+fairly generic implementation that can be reused across many projects.
+In recognition of this DbUtils provides a set of <code>ResultSetHandler</code>
+implementations in the 
+<a href="apidocs/org/apache/commons/dbutils/handlers/package-summary.html">org.apache.commons.dbutils.handlers</a> 
+package that perform common transformations into arrays, Maps, and JavaBeans.
+There is a version of each implementation that converts just the first row and 
+another that converts all rows in the <code>ResultSet</code>. 
+</p>
+
+<p>
+  We'll start with an example using the <code>BeanHandler</code> to fetch one
+  row from the <code>ResultSet</code> and turn it into a JavaBean. 
+</p>
+
+<source>
+<![CDATA[
+QueryRunner run = new QueryRunner(dataSource);
+
+// Use the BeanHandler implementation to convert the first
+// ResultSet row into a Person JavaBean.
+ResultSetHandler<Person> h = new BeanHandler<Person>(Person.class);
+
+// Execute the SQL statement with one replacement parameter and
+// return the results in a new Person object generated by the BeanHandler.
+Person p = run.query(
+    "SELECT * FROM Person WHERE name=?", h, "John Doe"); 
+]]>
+</source>
+
+<p>
+  This time we will use the BeanListHandler to fetch all rows from the
+  <code>ResultSet</code> and turn them into a <code>List</code> of JavaBeans. 
+</p>
+
+<source>
+<![CDATA[
+QueryRunner run = new QueryRunner(dataSource);
+
+// Use the BeanListHandler implementation to convert all
+// ResultSet rows into a List of Person JavaBeans.
+ResultSetHandler<List<Person>> h = new BeanListHandler<Person>(Person.class);
+
+// Execute the SQL statement and return the results in a List of
+// Person objects generated by the BeanListHandler.
+List<Person> persons = run.query("SELECT * FROM Person", h);
+]]>
+</source>
+
+</section>
+
+<section name="Custom RowProcessor">
+<p>
+Each of the provided <code>ResultSetHandler</code> implementations accept a 
+<a href="apidocs/org/apache/commons/dbutils/RowProcessor.html">RowProcessor</a>
+to do the actual conversion of rows into objects.  By default the handlers
+use the <a href="apidocs/org/apache/commons/dbutils/BasicRowProcessor.html">BasicRowProcessor</a> 
+implementation but you can implement a custom version to plug in.
+Probably the most common customization is to implement the <code>toBean()</code>
+method to handle custom database datatype issues.
+</p>
+</section>
+
+<section name="Custom BeanProcessor">
+<p>
+<code>BasicRowProcessor</code> uses a <a href="apidocs/org/apache/commons/dbutils/BeanProcessor.html">BeanProcessor</a>
+to convert <code>ResultSet</code> columns into JavaBean properties.  You can 
+subclass and override processing steps to handle datatype mapping specific to 
+your application.  The provided implementation delegates datatype conversion to 
+the JDBC driver.
+</p>
+<p>
+BeanProcessor maps columns to bean properties as documented in the 
+<a href="apidocs/org/apache/commons/dbutils/BeanProcessor.html#toBean(java.sql.ResultSet,%20java.lang.Class)">BeanProcessor.toBean()</a> javadoc.  
+Column names must match the bean's property names case insensitively.  
+For example, the <code>firstname</code> column would be stored in the bean 
+by calling its <code>setFirstName()</code> method.  However, many database 
+column names include characters that either can't be used or are not typically 
+used in Java method names.  You can do one of the following to map 
+these columns to bean properties:
+<ol>
+    <li>
+        Alias the column names in the SQL so they match the Java names:  
+        <code>select social_sec# as socialSecurityNumber from person</code>
+    </li>
+    <li>
+        Subclass BeanProcessor and override the <a href="apidocs/org/apache/commons/dbutils/BeanProcessor.html#mapColumnsToProperties(java.sql.ResultSetMetaData,%20java.beans.PropertyDescriptor[])">mapColumnsToProperties()</a> 
+        method to strip out the offending characters.
+    </li>
+</ol>
+</p>
+</section>
+
+</body>
+</document>
+

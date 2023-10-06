@@ -15,12 +15,12 @@ import java.util.Map;
 public class Model implements AutoCloseable, com.macnss.interfaces.Libs.Model {
     protected Connection connection;
     protected String _table;
-    protected String[] _primaryKey = {"id"};
+    protected Object[] _primaryKey = {"id"};
     protected String _foreignKey = null;
     protected Boolean _softDelete = false;
     private boolean inTransaction = false;
 
-    public Model(String tableName, String[] primaryKey) {
+    public Model(String tableName, Object[] primaryKey) {
         this.connection = database.getConnection();
         this._table = tableName;
         if (primaryKey != null && primaryKey.length > 0) {

@@ -21,7 +21,6 @@ public class VerificationAgentCNSSCodesDao extends Model {
 
             return preparedStatement.executeUpdate() == 1;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }

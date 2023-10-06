@@ -1,4 +1,6 @@
 module com.biblio {
+    uses com.macnss.Libs.orm.src.main.java.org.apache.commons.dbutils.ColumnHandler;
+    uses com.macnss.Libs.orm.src.main.java.org.apache.commons.dbutils.PropertyHandler;
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -21,4 +23,7 @@ module com.biblio {
 
     opens com.macnss to javafx.fxml;
     exports com.macnss;
+    exports com.macnss.app.Models;
+    exports  com.macnss.app.Models.user;
+    exports com.macnss.app.Models.Abstract;
 }
