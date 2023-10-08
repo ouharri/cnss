@@ -17,18 +17,17 @@ import java.sql.Date;
 import java.util.UUID;
 
 
-@PrimaryKey
 @Table(name = "employees_company")
 public @Data() class EmployeeCompany {
 
-    @Getter(AccessLevel.NONE) employees  employee;
-    @Getter(AccessLevel.NONE) company company;
-    employeetype employee_type = null;
-    Date start_date = null;
-    Date end_date = null;
-    @AutoGenerateGetSet
-    BigDecimal salary;
-    BigDecimal contribution;
+    private @PrimaryKey UUID id;
+    private @Getter(AccessLevel.NONE) employees  employee;
+    private @Getter(AccessLevel.NONE) company company;
+    private employeetype employee_type = null;
+    private Date start_date = null;
+    private Date end_date = null;
+    private BigDecimal salary;
+    private BigDecimal contribution;
 
 
     public EmployeeCompany() {

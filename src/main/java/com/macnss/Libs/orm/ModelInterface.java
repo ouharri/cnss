@@ -186,6 +186,14 @@ public interface ModelInterface<T> {
     boolean update();
 
     /**
+     * Updates records in the associated database table with the provided data based on specified primary key values.
+     *
+     * @param obj The model object to update.
+     * @return True if the update operation is successful; otherwise, false.
+     */
+    boolean update(T obj);
+
+    /**
      * Deletes records from the associated database table based on specified primary key values.
      *
      * @return True if the delete operation is successful; otherwise, false.
@@ -211,7 +219,7 @@ public interface ModelInterface<T> {
      *
      * @return The number of records returned by the query.
      */
-    int count();
+    Long count();
 
     /**
      * Executes a raw SQL query.

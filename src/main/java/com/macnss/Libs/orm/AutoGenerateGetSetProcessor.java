@@ -1,5 +1,7 @@
 package com.macnss.Libs.orm;
 
+import com.google.auto.service.*;
+
 import java.lang.reflect.Field;
 import java.util.Set;
 import javax.annotation.processing.*;
@@ -7,13 +9,18 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.tools.Diagnostic;
 
-@SupportedAnnotationTypes("your.package.name.AutoGenerateGetSet")
+@SupportedAnnotationTypes("com.macnss.Libs.orm.AutoGenerateGetSet")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
+@AutoService(Processor.class)
 public class AutoGenerateGetSetProcessor extends AbstractProcessor {
+
+    static {
+        System.out.println("AutoGenerateGetSetProcessor");
+    }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        System.out.println("ghjgjghjgkjgkjh");
+        System.out.println("AutoGenerateGetSetProcessor");
         for (Element element : roundEnv.getElementsAnnotatedWith(AutoGenerateGetSet.class)) {
             if (element.getKind() == ElementKind.FIELD) {
                 generateGettersAndSetters((VariableElement) element);
@@ -26,7 +33,6 @@ public class AutoGenerateGetSetProcessor extends AbstractProcessor {
     }
 
     private void generateGettersAndSetters(VariableElement fieldElement) {
-        System.out.println("ghjgjghjgkjgkjh");
         String fieldName = fieldElement.getSimpleName().toString();
         String capitalizedFieldName = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
 
@@ -65,4 +71,3 @@ public class AutoGenerateGetSetProcessor extends AbstractProcessor {
         System.out.println(modifiedClassSource);
     }
 }
-

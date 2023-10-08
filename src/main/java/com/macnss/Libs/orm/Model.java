@@ -11,9 +11,12 @@ import com.macnss.Libs.dbutils.QueryRunner;
 import com.macnss.Libs.dbutils.ResultSetHandler;
 import com.macnss.Libs.dbutils.handlers.BeanHandler;
 import com.macnss.Libs.dbutils.handlers.BeanListHandler;
+import com.macnss.Libs.dbutils.handlers.ScalarHandler;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import static com.macnss.Libs.orm.core.getAllFields;
 
 /**
  * The `Model` class provides a generic model for interacting with a database table. It implements CRUD (Create, Read, Update, Delete) operations
@@ -46,13 +49,20 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
         _class = (Class<T>) type;
         _fields = _class.getDeclaredFields();
 
-        if (_class.isAnnotationPresent(Table.class)) _table = _class.getAnnotation(Table.class).name().toLowerCase();
+        if (_class.isAnnotationPresent(Table.class))
+            _table = _class.getAnnotation(Table.class).name().toLowerCase();
 
-        if (_table == null) _table = _class.getName();
+        if (_table == null)
+            _table = _class.getName();
 
-        if (_class.isAnnotationPresent(PrimaryKey.class))
+        if (_class.isAnnotationPresent(Table.class)) for (Field field : getAllFields(_class)) {
+            if (field.isAnnotationPresent(PrimaryKey.class)) {
+                _primaryKey.add(field.getName());
+            }
+        }
+        else if (_class.isAnnotationPresent(PrimaryKey.class))
             _primaryKey = new LinkedList<>(Arrays.asList(_class.getAnnotation(PrimaryKey.class).key()));
-
+        else _primaryKey.add("id");
     }
 
     /**
@@ -262,7 +272,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
             for (Field field : _fields) {
                 field.setAccessible(true);
 
-                if (field.get(_object) != null) fieldAllowed++;
+                if (field.get(obj) != null) fieldAllowed++;
 
                 field.setAccessible(false);
             }
@@ -275,9 +285,14 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
                 Object value = field.get(obj);
 
                 if (value != null) {
+                    if (value instanceof smiyaMoa9ata) {
+                        value = value.getClass().getDeclaredMethod("getId").invoke(value);
+                    }
+
                     values[index++] = value;
-                    queryBuilder.append(field.getName());
                     valuesBuilder.append("?");
+                    queryBuilder.append(field.getName());
+
                     if (index < fieldAllowed) {
                         queryBuilder.append(", ");
                         valuesBuilder.append(", ");
@@ -293,7 +308,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
             if (this._softDelete) queryBuilder.append(" WHERE delete_at IS NULL");
 
             return _run.insert(this.conn, queryBuilder.toString(), q, values);
-        } catch (SQLException | IllegalAccessException e) {
+        } catch (SQLException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
@@ -538,14 +553,17 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
                 Object value = field.get(_object);
 
                 if (value != null) {
-                    if (atLeastOneFieldUpdated) {
-                        queryBuilder.append(", ");
+                    if (!field.isAnnotationPresent(PrimaryKey.class)) {
+                        if (atLeastOneFieldUpdated)
+                            queryBuilder.append(", ");
+
+                        if (value instanceof smiyaMoa9ata)
+                            value = value.getClass().getDeclaredMethod("getId").invoke(value);
+
+                        queryBuilder.append(field.getName()).append(" = ?");
+                        atLeastOneFieldUpdated = true;
+                        values.add(value);
                     }
-
-                    queryBuilder.append(field.getName()).append(" = ?");
-                    values.add(value);
-
-                    atLeastOneFieldUpdated = true;
                 }
 
                 field.setAccessible(false);
@@ -577,7 +595,79 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
             int rowsUpdated = _run.update(this.conn, queryBuilder.toString(), values.toArray());
 
             return rowsUpdated > 0;
-        } catch (SQLException | IllegalAccessException | NoSuchFieldException e) {
+        } catch (SQLException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException |
+                 InvocationTargetException e) {
+            throw new RuntimeException("Error updating the object.", e);
+        }
+    }
+
+    /**
+     * Updates the associated model object and saves the changes to the database.
+     *
+     * @param obj The model object to update in the database.
+     * @return `true` if at least one field was updated, `false` otherwise.
+     */
+    @Override
+    public boolean update(T obj) {
+        try {
+            if (this.conn == null || this.conn.isClosed()) {
+                throw new SQLException("The connection to the database is closed or invalid.");
+            }
+
+            boolean atLeastOneFieldUpdated = false;
+            List<Object> values = new ArrayList<>();
+            StringBuilder queryBuilder = new StringBuilder("UPDATE ").append(_table).append(" SET ");
+
+            for (Field field : _fields) {
+                field.setAccessible(true);
+
+                Object value = field.get(obj);
+
+                if (value != null) {
+                    if (!field.isAnnotationPresent(PrimaryKey.class)) {
+                        if (atLeastOneFieldUpdated)
+                            queryBuilder.append(", ");
+
+                        if (value instanceof smiyaMoa9ata)
+                            value = value.getClass().getDeclaredMethod("getId").invoke(value);
+
+                        queryBuilder.append(field.getName()).append(" = ?");
+                        atLeastOneFieldUpdated = true;
+                        values.add(value);
+                    }
+                }
+
+                field.setAccessible(false);
+            }
+
+            if (!atLeastOneFieldUpdated) {
+                return false;
+            }
+
+            queryBuilder.append(" WHERE ");
+
+            int i = 0;
+            for (Object primaryKeyField : _primaryKey) {
+                Field field = _class.getDeclaredField(primaryKeyField.toString());
+                field.setAccessible(true);
+
+                queryBuilder.append(primaryKeyField).append(" = ?");
+                values.add(field.get(obj));
+
+                field.setAccessible(false);
+
+                if (i < _primaryKey.size() - 1) {
+                    queryBuilder.append(" AND ");
+                }
+
+                i++;
+            }
+
+            int rowsUpdated = _run.update(this.conn, queryBuilder.toString(), values.toArray());
+
+            return rowsUpdated > 0;
+        } catch (SQLException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException |
+                 InvocationTargetException e) {
             throw new RuntimeException("Error updating the object.", e);
         }
     }
@@ -759,15 +849,22 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      * @return The number of records returned by the query.
      */
     @Override
-    public int count() {
+    public Long count() {
         try {
             if (this.conn == null || this.conn.isClosed()) {
                 throw new SQLException("The connection to the database is closed or invalid.");
             }
 
-            ResultSetHandler<Integer> q = new BeanHandler<>(Integer.class);
+            StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(*) AS count FROM ").append(_table);
 
-            return _run.query(this.conn, "SELECT COUNT(*) FROM " + _table, q);
+            if (!_query.isEmpty()) queryBuilder.append(_query).append(" LIMIT 1;");
+            else queryBuilder.append(" LIMIT 1;");
+
+            ScalarHandler<Long> q = new ScalarHandler<>("count");
+
+            if (!_query.isEmpty()) return _run.query(this.conn, queryBuilder.toString(), q, _queryParam.toArray());
+
+            return _run.query(this.conn, queryBuilder.toString(), q);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -779,16 +876,6 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
     @Override
     public void close() {
         this.conn = database.closeConnection();
-    }
-
-    public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
-        fields.addAll(List.of(type.getDeclaredFields()));
-
-        if (type.getSuperclass() != null) {
-            getAllFields(fields, type.getSuperclass());
-        }
-
-        return fields;
     }
 
 }

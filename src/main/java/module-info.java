@@ -24,6 +24,8 @@ module com.biblio {
     requires jcalendar;
     requires jakarta.mail;
     requires java.compiler;
+    requires com.google.auto.service;
+//    requires com.google.auto.service;
 
     opens com.macnss to javafx.fxml;
     exports com.macnss;

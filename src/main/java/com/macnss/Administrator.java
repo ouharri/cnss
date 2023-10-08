@@ -1,10 +1,5 @@
 package com.macnss;
 
-//import com.macnss.app.Models.company;
-import com.macnss.database.dao.CompanyDao;
-
-import java.util.UUID;
-
 public class Administrator {
 
     private Administrator() {

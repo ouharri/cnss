@@ -1,6 +1,5 @@
 package com.macnss;
 
-import com.macnss.Libs.orm.AutoGenerateGetSetProcessor;
 import com.macnss.app.Enums.employeetype;
 import com.macnss.app.Models.company;
 import com.macnss.app.Models.EmployeeCompany;
@@ -20,7 +19,7 @@ public class Agent {
     }
 
     public static void main(String[] args) {
-        new AutoGenerateGetSetProcessor();
+
 
         company company = new company(
                 "orivato",
@@ -40,6 +39,8 @@ public class Agent {
 //        emp.getBirthday("1999-09-09");
         company comdao = new CompanyDao().get(new Object[]{UUID.fromString("635ca9b4-d6cf-4bf1-b1d5-8346f4ef57fd")});
         employees em = new EmployeeDao().get(new Object[]{UUID.fromString("e9cd95ec-b80c-456f-806f-f0bee7f85a37")});
+        em.setFirst_name("outman");
+
         EmployeeCompany empComp = new EmployeeCompany(
                 em,
                 comdao,
@@ -47,14 +48,15 @@ public class Agent {
                 Date.valueOf("2020-09-09"),
                 null,
                 BigDecimal.valueOf(67576.0000),
-                BigDecimal.valueOf(1000)
+                BigDecimal.valueOf(500)
         );
 
 
         employeesCompanyDao employeesCompanyDaoDao = new employeesCompanyDao();
         EmployeeCompany employeesCompany = employeesCompanyDaoDao.get(new Object[]{UUID.fromString("bce4f68a-7eb7-4ab9-bd36-e8eefb2312e9")});
+        empComp.setId(UUID.fromString("4bdafd2d-3839-474b-826f-2ed388893a88"));
 
-        System.out.println(new employeesCompanyDao().where("contribution",2.00).find().toString());
+        System.out.println(new employeesCompanyDao().where("employee",UUID.fromString("e9cd95ec-b80c-456f-806f-f0bee7f85a37")).count());
 
         new EmployeeCompany();
 

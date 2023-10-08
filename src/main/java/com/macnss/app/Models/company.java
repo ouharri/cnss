@@ -1,5 +1,6 @@
 package com.macnss.app.Models;
 
+import com.macnss.Libs.orm.AutoGenerateGetSet;
 import com.macnss.Libs.orm.Table;
 import com.macnss.Libs.orm.PrimaryKey;
 import com.macnss.Libs.orm.smiyaMoa9ata;
@@ -7,11 +8,12 @@ import lombok.Data;
 
 import java.util.UUID;
 
-@Table(name = "company")
 @PrimaryKey
+@Table(name = "company")
 public @Data class company implements smiyaMoa9ata {
 
-    private UUID id;
+    private @PrimaryKey UUID id;
+    @AutoGenerateGetSet
     private String name;
     private String address;
     private String city;

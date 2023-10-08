@@ -13,7 +13,6 @@ import lombok.Data;
  * Represents an Employee, extending the 'employee' class.
  */
 @Data
-@PrimaryKey
 @Table(name = "employees")
 public class employees implements smiyaMoa9ata {
 
@@ -25,6 +24,6 @@ public class employees implements smiyaMoa9ata {
     private Date birthday = null;
     private String pwd_hash = null;
     private String gender = null;
-    public UUID id;
+    public @PrimaryKey UUID id;
 
 }
