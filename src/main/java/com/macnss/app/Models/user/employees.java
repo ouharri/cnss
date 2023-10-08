@@ -12,9 +12,9 @@ import lombok.Data;
 /**
  * Represents an Employee, extending the 'employee' class.
  */
-@Data
+
 @Table(name = "employees")
-public class employees implements smiyaMoa9ata {
+public @Data class employees implements smiyaMoa9ata {
 
     private String cnie = null;
     private String first_name = null;
