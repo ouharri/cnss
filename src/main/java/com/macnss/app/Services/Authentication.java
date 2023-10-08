@@ -33,7 +33,7 @@ public class Authentication {
             Optional<Administrator> adminOptional = dao.get(username);
             if (adminOptional.isPresent()) {
                 Administrator administrator = adminOptional.get();
-                if (AuthenticationHelpers.checkPassword(password, administrator.getPassword())) {
+                if (AuthenticationHelpers.checkPassword(password, administrator.getPwd_hash())) {
                     int code = AuthenticationHelpers.generateRandomCode(6);
                     try (VerificationAdministratorsCodesDao codeDao = new VerificationAdministratorsCodesDao()) {
                         if (codeDao.create(administrator.getAdministrator_id(), AuthenticationHelpers.hashPassword(String.valueOf(code)))) {
@@ -72,7 +72,7 @@ public class Authentication {
             Optional<Administrator> adminOptional = dao.get(username);
             if (adminOptional.isPresent()) {
                 Administrator administrator = adminOptional.get();
-                if (AuthenticationHelpers.checkPassword(password, administrator.getPassword())) {
+                if (AuthenticationHelpers.checkPassword(password, administrator.getPwd_hash())) {
                     try (VerificationAdministratorsCodesDao codeDao = new VerificationAdministratorsCodesDao()) {
                         return AuthenticationHelpers.checkPassword(code, codeDao.retrieveCode(administrator.getAdministrator_id()));
                     } catch (Exception e) {
@@ -98,7 +98,7 @@ public class Authentication {
             Optional<AgentCNSS> agentOptional = dao.get(username);
             if (agentOptional.isPresent()) {
                 AgentCNSS agentCNSS = agentOptional.get();
-                if (AuthenticationHelpers.checkPassword(password, agentCNSS.getPassword())) {
+                if (AuthenticationHelpers.checkPassword(password, agentCNSS.getPwd_hash())) {
                     int code = AuthenticationHelpers.generateRandomCode(6);
                     try (VerificationAgentCNSSCodesDao codeDao = new VerificationAgentCNSSCodesDao()) {
                         if (codeDao.create(agentCNSS.getAgent_cns_id(), AuthenticationHelpers.hashPassword(String.valueOf(code)))) {
@@ -137,7 +137,7 @@ public class Authentication {
             Optional<AgentCNSS> agentOptional = dao.get(username);
             if (agentOptional.isPresent()) {
                 AgentCNSS agentCNSS = agentOptional.get();
-                if (AuthenticationHelpers.checkPassword(password, agentCNSS.getPassword())) {
+                if (AuthenticationHelpers.checkPassword(password, agentCNSS.getPwd_hash())) {
                     try (VerificationAgentCNSSCodesDao codeDao = new VerificationAgentCNSSCodesDao()) {
                         return AuthenticationHelpers.checkPassword(code, codeDao.retrieveCode(agentCNSS.getAgent_cns_id()));
                     } catch (Exception e) {

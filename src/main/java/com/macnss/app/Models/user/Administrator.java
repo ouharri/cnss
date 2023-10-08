@@ -30,10 +30,7 @@ public class Administrator extends employee {
      * @param password     The password of the Administrator.
      * @param administrator_id The unique identifier for the Administrator.
      */
-    public void setAdministrator(String cnie, String firstName, String lastName, Date birthday, Gender gender, String email, String phone, String password, int administrator_id) {
-        super.setUser(cnie, firstName, lastName, birthday, gender, email, phone, password);
-        this.administrator_id = administrator_id;
-    }
+
 
     /**
      * Retrieves Administrator user data as a map, including the administrator ID.

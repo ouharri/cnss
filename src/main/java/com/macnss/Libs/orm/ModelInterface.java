@@ -66,6 +66,14 @@ public interface ModelInterface<T> {
     T save();
 
     /**
+     * Inserts a new record into the associated database table.
+     *
+     * @param obj The model object to insert.
+     * @return The inserted model.
+     */
+    T insert(T obj);
+
+    /**
      * Specifies a "WHERE" condition for queries.
      *
      * @param key   The name of the column.

@@ -1,15 +1,17 @@
 package com.macnss.app.Models;
 
 import com.macnss.Libs.orm.Table;
+import com.macnss.Libs.orm.PrimaryKey;
+import com.macnss.Libs.orm.smiyaMoa9ata;
 import lombok.Data;
 
 import java.util.UUID;
 
-@Data
 @Table(name = "company")
-public class company implements smiyaMoa9ata{
+@PrimaryKey
+public @Data class company implements smiyaMoa9ata {
 
-    private UUID company_id;
+    private UUID id;
     private String name;
     private String address;
     private String city;
@@ -18,4 +20,19 @@ public class company implements smiyaMoa9ata{
     private String phone;
     private String email;
     private String website;
+
+    public company() {
+    }
+
+    public company(String name, String address, String city, String country, String postalCode, String phone, String email, String website) {
+        this.name = name;
+        this.address = address;
+        this.city = city;
+        this.country = country;
+        this.postalCode = postalCode;
+        this.phone = phone;
+        this.email = email;
+        this.website = website;
+    }
+
 }

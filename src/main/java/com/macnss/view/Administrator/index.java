@@ -425,8 +425,8 @@ public class index extends JFrame implements ActionListener {
         for (AgentCNSS agent : agents) {
             String id = String.valueOf(agent.getAgent_cns_id());
             String cnie = agent.getCnie();
-            String firstName = agent.getFirstName();
-            String lastName = agent.getLastName();
+            String firstName = agent.getFirst_name();
+            String lastName = agent.getLast_name();
             String email = agent.getEmail();
             String phone = agent.getPhone();
             String birthday = String.valueOf(agent.getBirthday());

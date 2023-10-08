@@ -1,5 +1,6 @@
 package com.macnss.app.Models.Abstract;
 
+import com.macnss.Libs.orm.Table;
 import com.macnss.app.Enums.Gender;
 import lombok.Data;
 
@@ -13,21 +14,22 @@ import java.util.Map;
  * An abstract class representing a user with common attributes and methods.
  */
 @Data
+@Table(name = "users")
 public abstract class User {
 
     protected String cnie = null;
-    protected String firstName = null;
-    protected String lastName = null;
+    protected String first_name = null;
+    protected String last_name = null;
     protected String email = null;
     protected Date birthday = null;
     protected String phone = null;
-    protected Gender gender = null;
-    protected String password = null;
-    protected String address = null;
-    protected String city = null;
-    protected String country = null;
-    protected String postal_code = null;
-    protected java.sql.Timestamp delete_at = null;
+    protected String gender = null;
+    protected String pwd_hash = null;
+//    protected String address = null;
+//    protected String city = null;
+//    protected String country = null;
+//    protected String postal_code = null;
+//    protected java.sql.Timestamp delete_at = null;
 
     /**
      * Retrieves user data as a map.
@@ -37,17 +39,17 @@ public abstract class User {
     public Map<String, Object> getUser() {
         Map<String, Object> userData = new HashMap<>();
         if (this.cnie != null) userData.put("cnie", this.cnie);
-        if (this.firstName != null) userData.put("first_name", this.firstName);
-        if (this.lastName != null) userData.put("last_name", this.lastName);
+        if (this.first_name != null) userData.put("first_name", this.first_name);
+        if (this.last_name != null) userData.put("last_name", this.last_name);
         if (this.birthday != null) userData.put("birthday", this.birthday);
         if (this.email != null) userData.put("email", this.email);
         if (this.phone != null) userData.put("phone", this.phone);
         if (this.gender != null) userData.put("gender", this.gender);
-        if (this.password != null) userData.put("pwd_hash", this.password);
-        if (this.address != null) userData.put("address", this.address);
-        if (this.city != null) userData.put("city", this.city);
-        if (this.country != null) userData.put("country", this.country);
-        if (this.postal_code != null) userData.put("postalCode", this.postal_code);
+        if (this.pwd_hash != null) userData.put("pwd_hash", this.pwd_hash);
+//        if (this.address != null) userData.put("address", this.address);
+//        if (this.city != null) userData.put("city", this.city);
+//        if (this.country != null) userData.put("country", this.country);
+//        if (this.postal_code != null) userData.put("postalCode", this.postal_code);
         return userData;
     }
 
@@ -65,13 +67,13 @@ public abstract class User {
      */
     public void setUser(String cnie, String firstName, String lastName, Date birthday, Gender gender, String email, String phone, String password) {
         this.cnie = cnie;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.first_name = firstName;
+        this.last_name = lastName;
         this.birthday = birthday;
-        this.gender = Gender.valueOf(String.valueOf(gender));
+//        this.gender = Gender.valueOf(String.valueOf(gender));
         this.email = email;
         this.phone = phone;
-        this.password = password;
+        this.pwd_hash = password;
     }
 
     /**
@@ -83,8 +85,8 @@ public abstract class User {
      */
     public void setUser(String cnie, String firstName, String lastName) {
         this.cnie = cnie;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.first_name = firstName;
+        this.last_name = lastName;
     }
 
     /**
@@ -93,7 +95,7 @@ public abstract class User {
      * @return The full name of the user.
      */
     public String getFullName() {
-        return this.firstName + " " + this.lastName;
+        return this.first_name + " " + this.last_name;
     }
 
     /**
@@ -101,9 +103,9 @@ public abstract class User {
      *
      * @return The full address of the user.
      */
-    public String getFullAddress() {
-        return this.address + ",\n" + this.city + ", " + this.postal_code + ",\n" + this.country;
-    }
+//    public String getFullAddress() {
+//        return this.address + ",\n" + this.city + ", " + this.postal_code + ",\n" + this.country;
+//    }
 
     /**
      * Calculates and returns the age of the user based on their birthday.

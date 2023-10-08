@@ -2,7 +2,7 @@ package com.macnss.app.Models.user;
 
 import com.macnss.app.Enums.Gender;
 import com.macnss.app.Models.Abstract.User;
-import com.macnss.app.Models.smiyaMoa9ata;
+import com.macnss.Libs.orm.smiyaMoa9ata;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

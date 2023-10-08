@@ -3,14 +3,14 @@ package com.macnss.Libs.orm;
 import com.macnss.Core.database;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.*;
 
-import com.macnss.Libs.orm.src.main.java.org.apache.commons.dbutils.QueryRunner;
-import com.macnss.Libs.orm.src.main.java.org.apache.commons.dbutils.ResultSetHandler;
-import com.macnss.Libs.orm.src.main.java.org.apache.commons.dbutils.handlers.BeanHandler;
-import com.macnss.Libs.orm.src.main.java.org.apache.commons.dbutils.handlers.BeanListHandler;
-import com.macnss.app.Models.smiyaMoa9ata;
+import com.macnss.Libs.dbutils.QueryRunner;
+import com.macnss.Libs.dbutils.ResultSetHandler;
+import com.macnss.Libs.dbutils.handlers.BeanHandler;
+import com.macnss.Libs.dbutils.handlers.BeanListHandler;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -31,7 +31,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
     private final Field[] _fields;
 
     protected String _table;
-    protected final Queue<Object> _primaryKey = new LinkedList<>();
+    protected Queue<Object> _primaryKey = new LinkedList<>();
     protected final Queue<Object> _foreignKey = new LinkedList<>();
     protected Boolean _softDelete = false;
 
@@ -42,9 +42,17 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
     public Model() {
         ParameterizedType superClass = (ParameterizedType) getClass().getGenericSuperclass();
         Type type = superClass.getActualTypeArguments()[0];
+
         _class = (Class<T>) type;
         _fields = _class.getDeclaredFields();
-        _table = _class.getAnnotation(Table.class).name().toLowerCase();
+
+        if (_class.isAnnotationPresent(Table.class)) _table = _class.getAnnotation(Table.class).name().toLowerCase();
+
+        if (_table == null) _table = _class.getName();
+
+        if (_class.isAnnotationPresent(PrimaryKey.class))
+            _primaryKey = new LinkedList<>(Arrays.asList(_class.getAnnotation(PrimaryKey.class).key()));
+
     }
 
     /**
@@ -66,13 +74,12 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      */
     @Override
     public Model<T> beginTransaction() {
-        if (!inTransaction)
-            try {
-                this.conn.setAutoCommit(false);
-                this.inTransaction = true;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        if (!inTransaction) try {
+            this.conn.setAutoCommit(false);
+            this.inTransaction = true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 
@@ -83,14 +90,13 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      */
     @Override
     public Model<T> commitTransaction() {
-        if (inTransaction)
-            try {
-                this.conn.commit();
-                this.conn.setAutoCommit(true);
-                this.inTransaction = false;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        if (inTransaction) try {
+            this.conn.commit();
+            this.conn.setAutoCommit(true);
+            this.inTransaction = false;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 
@@ -101,14 +107,13 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      */
     @Override
     public Model<T> rollbackTransaction() {
-        if (inTransaction)
-            try {
-                this.conn.rollback();
-                this.conn.setAutoCommit(true);
-                this.inTransaction = false;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        if (inTransaction) try {
+            this.conn.rollback();
+            this.conn.setAutoCommit(true);
+            this.inTransaction = false;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 
@@ -194,23 +199,10 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
             for (Field field : _fields) {
                 field.setAccessible(true);
 
-//                System.out.println("\n\n" + (field.getType().isAnnotationPresent(Table.class)) + "  " + field.getDeclaredAnnotations() + "  " + field.getType() + "\n\n");
-
-                if (field.getType().isAnnotationPresent(Table.class)) {
-
-                    for (Field fieldsubField : field.getType().getDeclaredFields()) {
-                        if (fieldsubField.get(_object) != null) {
-                            fieldAllowed++;
-                        }
-                    }
-                } else {
-                    fieldAllowed++;
-                }
+                if (field.get(_object) != null) fieldAllowed++;
 
                 field.setAccessible(false);
             }
-
-            System.out.println("hh"+fieldAllowed);
 
             Object[] values = new Object[fieldAllowed];
             int index = 0;
@@ -218,31 +210,69 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
             for (Field field : _fields) {
                 field.setAccessible(true);
                 Object value = field.get(_object);
-                field.setAccessible(true);
 
-                if (field.getType().isAnnotationPresent(Table.class)) {
-                    queryBuilder.append(" ROW(");
-
-                    for (Field fieldsubField :  field.getType().getDeclaredFields()) {
-                        fieldsubField.setAccessible(true);
-                        Object fieldSubFieldValue = fieldsubField.get(_object);
-
-                        if (fieldSubFieldValue != null) {
-                            values[index++] = fieldSubFieldValue;
-                            queryBuilder.append(fieldsubField.getName());
-                            valuesBuilder.append("?");
-
-                            if (index < fieldAllowed) {
-                                queryBuilder.append(", ");
-                                valuesBuilder.append(", ");
-                            }
-                        }
-
-                        fieldsubField.setAccessible(false);
+                if (value != null) {
+                    if (value instanceof smiyaMoa9ata) {
+                        value = value.getClass().getDeclaredMethod("getId").invoke(value);
                     }
 
-                    queryBuilder.append(")");
+                    values[index++] = value;
+                    valuesBuilder.append("?");
+                    queryBuilder.append(field.getName());
+
+                    if (index < fieldAllowed) {
+                        queryBuilder.append(", ");
+                        valuesBuilder.append(", ");
+                    }
                 }
+
+                field.setAccessible(false);
+            }
+
+
+            queryBuilder.append(valuesBuilder).append(")");
+
+            if (this._softDelete) queryBuilder.append(" WHERE delete_at IS NULL");
+
+            return _run.insert(this.conn, queryBuilder.toString(), q, values);
+        } catch (SQLException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * insert the record in the database.
+     *
+     * @param obj The model object to insert into a database.
+     * @return The model object representing the newly created record.
+     */
+    @Override
+    public T insert(T obj) {
+        try {
+            if (this.conn == null || this.conn.isClosed()) {
+                throw new SQLException("The connection to the database is closed or invalid.");
+            }
+
+            ResultSetHandler<T> q = new BeanHandler<>(_class);
+            StringBuilder queryBuilder = new StringBuilder("INSERT INTO ").append(_table).append(" (");
+            StringBuilder valuesBuilder = new StringBuilder(") VALUES (");
+
+            int fieldAllowed = 0;
+
+            for (Field field : _fields) {
+                field.setAccessible(true);
+
+                if (field.get(_object) != null) fieldAllowed++;
+
+                field.setAccessible(false);
+            }
+
+            Object[] values = new Object[fieldAllowed];
+            int index = 0;
+
+            for (Field field : _fields) {
+                field.setAccessible(true);
+                Object value = field.get(obj);
 
                 if (value != null) {
                     values[index++] = value;
@@ -261,8 +291,6 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
             queryBuilder.append(valuesBuilder).append(")");
 
             if (this._softDelete) queryBuilder.append(" WHERE delete_at IS NULL");
-
-            System.out.println("\n\n" + queryBuilder.toString() + "\n\n");
 
             return _run.insert(this.conn, queryBuilder.toString(), q, values);
         } catch (SQLException | IllegalAccessException e) {
@@ -752,4 +780,15 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
     public void close() {
         this.conn = database.closeConnection();
     }
+
+    public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
+        fields.addAll(List.of(type.getDeclaredFields()));
+
+        if (type.getSuperclass() != null) {
+            getAllFields(fields, type.getSuperclass());
+        }
+
+        return fields;
+    }
+
 }

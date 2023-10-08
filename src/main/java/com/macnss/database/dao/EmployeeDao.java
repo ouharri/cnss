@@ -8,8 +8,6 @@ import com.macnss.app.Models.user.employees;
  */
 public class EmployeeDao extends Model<employees> {
 
-    public EmployeeDao() {
-        _primaryKey.add("employee_id");
-    }
+
 
 }
