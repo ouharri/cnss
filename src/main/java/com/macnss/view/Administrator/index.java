@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.macnss.helpers.RetirementHelpers.calculateRetirementPension;
+
 public class index extends JFrame implements ActionListener {
 
     private Administrator Admin;
@@ -67,7 +69,7 @@ public class index extends JFrame implements ActionListener {
         agent_btn = new JButton("  Agent", Agent_icon);
         patient_btn = new JButton("  Patient", Patient_icon);
         medecine_btn = new JButton("  Medecine", Medecine_icon);
-        analyse_btn = new JButton("  Analyse", Laboratory_icon);
+        analyse_btn = new JButton("  Retirement", Laboratory_icon);
         radio_btn = new JButton(" Radio", Radio_icon);
         visit_btn = new JButton("  Visit", Visit_icon);
         scanner_btn = new JButton("  Scanner", Scanner_icon);
@@ -430,7 +432,7 @@ public class index extends JFrame implements ActionListener {
             String email = agent.getEmail();
             String phone = agent.getPhone();
             String birthday = String.valueOf(agent.getBirthday());
-            String gender = agent.getGender() == null ?   "MALE" : agent.getGender().toString();
+            String gender = agent.getGender() == null ? "MALE" : agent.getGender().toString();
             String status = agent.getStatus().toString();
 
             tableModel.addRow(new Object[]{id, cnie, firstName, lastName, email, phone, birthday, gender, status});
@@ -497,6 +499,14 @@ public class index extends JFrame implements ActionListener {
             }
 
         } else if (e.getSource() == analyse_btn) {
+            String salary = JOptionPane.showInputDialog(this, "salary", "Error", JOptionPane.ERROR_MESSAGE);
+            String totalWorkingDays = JOptionPane.showInputDialog(this, "totalWorkingDays", "Error", JOptionPane.ERROR_MESSAGE);
+
+            String result = String.valueOf(calculateRetirementPension(Float.parseFloat(salary), Integer.valueOf(totalWorkingDays)));
+
+            JOptionPane.showMessageDialog(this, "Calculate Retirement : " + result);
+
+
             refresh();
             try {
                 displayAvailableBook();
@@ -521,7 +531,6 @@ public class index extends JFrame implements ActionListener {
 
 
     private void displayAllBook() throws SQLException {
-
 
 
         revalidate();

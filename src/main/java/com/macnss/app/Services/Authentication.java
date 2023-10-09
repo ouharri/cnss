@@ -151,14 +151,13 @@ public class Authentication {
     }
 
     public boolean authenticateCompany(String username, String password) {
-        company Company = new CompanyDao().where("email", username).findOne();
-        System.out.println(Company);
+        company Company ;
         boolean res = false;
         try (CompanyDao dao = new CompanyDao()) {
+            Company = dao.where("email", username).findOne();
             if (Company == null) {
                 return false;
             }
-
             return AuthenticationHelpers.checkPassword(password, Company.getPsw_hash());
         } catch (Exception e) {
             return false;
