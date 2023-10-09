@@ -1,5 +1,7 @@
 package com.macnss.view.Authentication;
 
+import com.macnss.Libs.orm.AutoGenerateGetSet;
+import com.macnss.Libs.orm.AutoGenerateGetSetProcessor;
 import com.macnss.app.Models.user.Administrator;
 import com.macnss.app.Services.Authentication;
 import com.macnss.database.dao.AdministratorDao;
@@ -23,10 +25,13 @@ public class SigningAdministrator extends JFrame implements ActionListener {
     private ImageIcon userIcon, passwordIcon;
     private Image logo;
 
-    private String enteredUsername = null, enteredPassword = null;
+
+    private @AutoGenerateGetSet String enteredUsername = null, enteredPassword = null;
 
     public SigningAdministrator() {
+        new AutoGenerateGetSetProcessor();
         auth = new Authentication();
+        System.out.println(enteredUsername);
 
         setTitle("Signing Administrator CNSS");
         setSize(560, 700);
@@ -61,7 +66,7 @@ public class SigningAdministrator extends JFrame implements ActionListener {
         resendCode = new JButton("Resend Code ?");
 
         JLabel logoLabel = new JLabel(new ImageIcon(logo));
-        logoLabel.setBounds(130, 40,300 , 282);
+        logoLabel.setBounds(130, 40, 300, 282);
 
         usernameLabel.setBounds(40, 340, 470, 30);
         usernameLabel.setIcon(userIcon);

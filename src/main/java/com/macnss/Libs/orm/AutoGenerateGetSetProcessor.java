@@ -14,10 +14,6 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 public class AutoGenerateGetSetProcessor extends AbstractProcessor {
 
-    static {
-        System.out.println("AutoGenerateGetSetProcessor");
-    }
-
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         System.out.println("AutoGenerateGetSetProcessor");
