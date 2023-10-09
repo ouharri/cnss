@@ -16,7 +16,7 @@
  */
 package com.macnss.Libs.dbutils;
 
-import com.macnss.Libs.orm.smiyaMoa9ata;
+import com.macnss.Libs.orm.schema;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -315,7 +315,7 @@ public abstract class AbstractQueryRunner {
                 if (call != null && params[i] instanceof OutParameter) {
                     ((OutParameter<?>) params[i]).register(call, i + 1);
                 } else {
-                    if (params[i] instanceof Enum<?> || params[i] instanceof smiyaMoa9ata) {
+                    if (params[i] instanceof Enum<?> || params[i] instanceof schema) {
                         stmt.setObject(i + 1, params[i], Types.OTHER);
                     } else {
                         stmt.setObject(i + 1, params[i]);

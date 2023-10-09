@@ -1,37 +1,34 @@
 package com.macnss.app.Models;
 
-import com.macnss.Libs.orm.AutoGenerateGetSet;
 import com.macnss.Libs.orm.PrimaryKey;
 import com.macnss.Libs.orm.Table;
 import com.macnss.app.Enums.employeetype;
 import com.macnss.app.Models.user.employees;
 import com.macnss.database.dao.CompanyDao;
 import com.macnss.database.dao.EmployeeDao;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.beans.JavaBean;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.UUID;
 
 
+@ToString
 @Table(name = "employees_company")
-public @Data() class EmployeeCompany {
+public class EmployeeCompany {
 
-    private @PrimaryKey UUID id;
-    private @Getter(AccessLevel.NONE) employees  employee;
-    private @Getter(AccessLevel.NONE) company company;
-    private employeetype employee_type = null;
-    private Date start_date = null;
-    private Date end_date = null;
-    private BigDecimal salary;
-    private BigDecimal contribution;
+    public @PrimaryKey UUID id;
+    public employees employee;
+    public company company;
+    public employeetype employee_type = null;
+    public Date start_date = null;
+    public Date end_date = null;
+    public BigDecimal salary;
+    public BigDecimal contribution;
 
 
-    public EmployeeCompany() {
-    }
+
 
     public EmployeeCompany(employees employee, company company, employeetype employee_type, Date start_date, Date end_date, BigDecimal salary, BigDecimal contribution) {
         this.employee = employee;
@@ -44,6 +41,7 @@ public @Data() class EmployeeCompany {
     }
 
     public void setEmployee(UUID employee_id) {
+        System.out.println(3);
         try {
             employee = new EmployeeDao().get(new Object[]{employee_id});
             if (employee == null) System.out.println("employee not exist");
@@ -52,17 +50,17 @@ public @Data() class EmployeeCompany {
         }
     }
 
-    public void setCompany(UUID company_id) {
+    public void setCompany(Object company_id) {
+        System.out.println(1);
         try {
-            System.out.println(1);
             company = new CompanyDao().get(new Object[]{company_id});
-            if (employee == null) System.out.println("company not exist");
+            if (this.employee == null) System.out.println("company not exist");
         } catch (Exception e) {
             System.out.println("company not exist");
         }
     }
 
-    public void setEmployee_type(String employee_type) {
-        this.employee_type = employeetype.valueOf(employee_type);
+    public EmployeeCompany() {
     }
+
 }

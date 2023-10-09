@@ -14,7 +14,7 @@ module com.biblio {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
 
-    requires lombok;
+    requires static lombok;
     requires java.sql;
     requires org.postgresql.jdbc;
     requires java.desktop;

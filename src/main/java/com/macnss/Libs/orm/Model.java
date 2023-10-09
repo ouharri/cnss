@@ -15,8 +15,10 @@ import com.macnss.Libs.dbutils.handlers.ScalarHandler;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.regex.Pattern;
 
-import static com.macnss.Libs.orm.core.getAllFields;
+import static com.macnss.Libs.orm.fieldsHandler.getAllFields;
+import static com.macnss.Libs.orm.fieldsHandler.getObjectWithAllFields;
 
 /**
  * The `Model` class provides a generic model for interacting with a database table. It implements CRUD (Create, Read, Update, Delete) operations
@@ -31,7 +33,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
 
     private T _object = null;
     private final Class<T> _class;
-    private final Field[] _fields;
+    private final List<Field> _fields;
 
     protected String _table;
     protected Queue<Object> _primaryKey = new LinkedList<>();
@@ -47,7 +49,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
         Type type = superClass.getActualTypeArguments()[0];
 
         _class = (Class<T>) type;
-        _fields = _class.getDeclaredFields();
+        _fields = getAllFields(_class);
 
         if (_class.isAnnotationPresent(Table.class))
             _table = _class.getAnnotation(Table.class).name().toLowerCase();
@@ -57,7 +59,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
 
         if (_class.isAnnotationPresent(Table.class)) for (Field field : getAllFields(_class)) {
             if (field.isAnnotationPresent(PrimaryKey.class)) {
-                _primaryKey.add(field.getName());
+                _primaryKey.add(field.getName().toLowerCase());
             }
         }
         else if (_class.isAnnotationPresent(PrimaryKey.class))
@@ -72,8 +74,9 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      * @return The current Model instance.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Model<T> setObject(T object) {
-        _object = object;
+        _object = (T) getObjectWithAllFields(object);
         return this;
     }
 
@@ -133,6 +136,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      * @return A list of model objects representing the records.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<T> getAll() {
         try {
             if (this.conn == null || this.conn.isClosed()) {
@@ -144,7 +148,10 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
 
             if (_softDelete) queryBuilder.append(" WHERE delete_at IS NULL");
 
-            return _run.query(this.conn, queryBuilder.toString(), q);
+            if (_class.getSuperclass() != null)
+                return _run.query(this.conn, queryBuilder.toString(), q);
+
+            return _run.query(this.conn, queryBuilder.toString(), q).stream().map(e -> (T) getObjectWithAllFields(e)).toList();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -157,6 +164,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      * @return The model object representing the retrieved record, or null if not found.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public T get(Object[] value) {
         try {
             if (this.conn == null || this.conn.isClosed()) {
@@ -182,7 +190,10 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
                 query += " AND delete_at IS NULL";
             }
 
-            return _run.query(this.conn, query, q, value);
+            if (_class.getSuperclass() != null)
+                return _run.query(this.conn, query, q, value);
+
+            return (T) getObjectWithAllFields(_run.query(this.conn, query, q, value));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -194,6 +205,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      * @return The model object representing the newly created record.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public T save() {
         try {
             if (this.conn == null || this.conn.isClosed()) {
@@ -222,13 +234,14 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
                 Object value = field.get(_object);
 
                 if (value != null) {
-                    if (value instanceof smiyaMoa9ata) {
-                        value = value.getClass().getDeclaredMethod("getId").invoke(value);
+                    if (value instanceof schema) {
+                        String primaryKeyGetter = "get" + _primaryKey.toArray()[0].toString().substring(0, 1).toUpperCase() + _primaryKey.toArray()[0].toString().substring(1).toLowerCase();
+                        value = value.getClass().getDeclaredMethod(primaryKeyGetter).invoke(value);
                     }
 
                     values[index++] = value;
                     valuesBuilder.append("?");
-                    queryBuilder.append(field.getName());
+                    queryBuilder.append(field.getName().toLowerCase());
 
                     if (index < fieldAllowed) {
                         queryBuilder.append(", ");
@@ -244,7 +257,10 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
 
             if (this._softDelete) queryBuilder.append(" WHERE delete_at IS NULL");
 
-            return _run.insert(this.conn, queryBuilder.toString(), q, values);
+            if (_class.getSuperclass() != null)
+                return _run.insert(this.conn, queryBuilder.toString(), q, values);
+
+            return (T) getObjectWithAllFields(_run.insert(this.conn, queryBuilder.toString(), q, values));
         } catch (SQLException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
@@ -257,11 +273,14 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      * @return The model object representing the newly created record.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public T insert(T obj) {
         try {
             if (this.conn == null || this.conn.isClosed()) {
                 throw new SQLException("The connection to the database is closed or invalid.");
             }
+
+            getObjectWithAllFields(obj);
 
             ResultSetHandler<T> q = new BeanHandler<>(_class);
             StringBuilder queryBuilder = new StringBuilder("INSERT INTO ").append(_table).append(" (");
@@ -285,13 +304,14 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
                 Object value = field.get(obj);
 
                 if (value != null) {
-                    if (value instanceof smiyaMoa9ata) {
-                        value = value.getClass().getDeclaredMethod("getId").invoke(value);
+                    if (value instanceof schema) {
+                        String primaryKeyGetter = "get" + _primaryKey.toArray()[0].toString().substring(0, 1).toUpperCase() + _primaryKey.toArray()[0].toString().substring(1).toLowerCase();
+                        value = value.getClass().getDeclaredMethod(primaryKeyGetter).invoke(value);
                     }
 
                     values[index++] = value;
                     valuesBuilder.append("?");
-                    queryBuilder.append(field.getName());
+                    queryBuilder.append(field.getName().toLowerCase());
 
                     if (index < fieldAllowed) {
                         queryBuilder.append(", ");
@@ -305,9 +325,10 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
 
             queryBuilder.append(valuesBuilder).append(")");
 
-            if (this._softDelete) queryBuilder.append(" WHERE delete_at IS NULL");
+            if (_class.getSuperclass() != null)
+                return _run.insert(this.conn, queryBuilder.toString(), q, values);
 
-            return _run.insert(this.conn, queryBuilder.toString(), q, values);
+            return (T) getObjectWithAllFields(_run.insert(this.conn, queryBuilder.toString(), q, values));
         } catch (SQLException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
@@ -489,6 +510,7 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      * @return A list of model objects representing the retrieved records.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<T> find() {
         if (_query.isEmpty()) return new ArrayList<>();
         try {
@@ -501,7 +523,11 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
 
             if (_softDelete) queryBuilder.append(" AND delete_at IS NULL");
 
-            return _run.query(this.conn, queryBuilder.toString(), q, _queryParam.toArray());
+            if (_class.getSuperclass() != null)
+                return _run.query(this.conn, queryBuilder.toString(), q, _queryParam.toArray());
+
+            return _run.query(this.conn, queryBuilder.toString(), q, _queryParam.toArray()).stream().map(e -> (T) getObjectWithAllFields(e)).toList();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -513,19 +539,32 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
      * @return The model object representing the retrieved record, or null if not found.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public T findOne() {
         if (_query.isEmpty()) return null;
+
         try {
             if (this.conn == null || this.conn.isClosed()) {
                 throw new SQLException("The connection to the database is closed or invalid.");
             }
 
-            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM ").append(_table).append(_query);
+            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM ").append(_table).append(_query).append("LIMIT 1");
             ResultSetHandler<T> q = new BeanHandler<>(_class);
 
             if (_softDelete) queryBuilder.append(" AND delete_at IS NULL");
 
-            return _run.query(this.conn, queryBuilder.toString(), q);
+            if(_queryParam.size() <= 1) {
+
+                if (_class.getSuperclass() != null)
+                    return _run.query(this.conn, queryBuilder.toString(), q, _queryParam.toArray()[0]);
+
+                return (T) getObjectWithAllFields(_run.query(this.conn, queryBuilder.toString(), q, _queryParam.toArray()[0]));
+            } else{
+                if (_class.getSuperclass() != null)
+                    return _run.query(this.conn, queryBuilder.toString(), q, _queryParam.toArray());
+
+                return (T) getObjectWithAllFields(_run.query(this.conn, queryBuilder.toString(), q, _queryParam.toArray()));
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -557,10 +596,10 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
                         if (atLeastOneFieldUpdated)
                             queryBuilder.append(", ");
 
-                        if (value instanceof smiyaMoa9ata)
+                        if (value instanceof schema)
                             value = value.getClass().getDeclaredMethod("getId").invoke(value);
 
-                        queryBuilder.append(field.getName()).append(" = ?");
+                        queryBuilder.append(field.getName().toLowerCase()).append(" = ?");
                         atLeastOneFieldUpdated = true;
                         values.add(value);
                     }
@@ -614,6 +653,8 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
                 throw new SQLException("The connection to the database is closed or invalid.");
             }
 
+            getObjectWithAllFields(obj);
+
             boolean atLeastOneFieldUpdated = false;
             List<Object> values = new ArrayList<>();
             StringBuilder queryBuilder = new StringBuilder("UPDATE ").append(_table).append(" SET ");
@@ -628,10 +669,10 @@ public abstract class Model<T> implements AutoCloseable, ModelInterface<T> {
                         if (atLeastOneFieldUpdated)
                             queryBuilder.append(", ");
 
-                        if (value instanceof smiyaMoa9ata)
+                        if (value instanceof schema)
                             value = value.getClass().getDeclaredMethod("getId").invoke(value);
 
-                        queryBuilder.append(field.getName()).append(" = ?");
+                        queryBuilder.append(field.getName().toLowerCase()).append(" = ?");
                         atLeastOneFieldUpdated = true;
                         values.add(value);
                     }

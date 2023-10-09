@@ -13,9 +13,8 @@ import java.util.Map;
 /**
  * An abstract class representing a user with common attributes and methods.
  */
-@Data
 @Table(name = "users")
-public abstract class User {
+public @Data abstract class User {
 
     protected String cnie = null;
     protected String first_name = null;
@@ -23,13 +22,12 @@ public abstract class User {
     protected String email = null;
     protected Date birthday = null;
     protected String phone = null;
-    protected String gender = null;
+    protected Gender gender = null;
     protected String pwd_hash = null;
-//    protected String address = null;
-//    protected String city = null;
-//    protected String country = null;
-//    protected String postal_code = null;
-//    protected java.sql.Timestamp delete_at = null;
+
+    public void setGender(String gender) {
+        this.gender = Gender.valueOf(gender);
+    }
 
     /**
      * Retrieves user data as a map.

@@ -430,7 +430,7 @@ public class index extends JFrame implements ActionListener {
             String email = agent.getEmail();
             String phone = agent.getPhone();
             String birthday = String.valueOf(agent.getBirthday());
-            String gender = agent.getGender().toString();
+            String gender = agent.getGender() == null ?   "MALE" : agent.getGender().toString();
             String status = agent.getStatus().toString();
 
             tableModel.addRow(new Object[]{id, cnie, firstName, lastName, email, phone, birthday, gender, status});
@@ -521,6 +521,8 @@ public class index extends JFrame implements ActionListener {
 
 
     private void displayAllBook() throws SQLException {
+
+
 
         revalidate();
         repaint();

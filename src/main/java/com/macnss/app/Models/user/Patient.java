@@ -2,7 +2,7 @@ package com.macnss.app.Models.user;
 
 import com.macnss.app.Enums.Gender;
 import com.macnss.app.Models.Abstract.User;
-import com.macnss.Libs.orm.smiyaMoa9ata;
+import com.macnss.Libs.orm.schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Patient extends User implements smiyaMoa9ata {
+public class Patient extends User implements schema {
 
     private String matriculate;
 

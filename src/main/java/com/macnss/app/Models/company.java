@@ -1,27 +1,28 @@
 package com.macnss.app.Models;
 
-import com.macnss.Libs.orm.AutoGenerateGetSet;
 import com.macnss.Libs.orm.Table;
 import com.macnss.Libs.orm.PrimaryKey;
-import com.macnss.Libs.orm.smiyaMoa9ata;
+import com.macnss.Libs.orm.schema;
 import lombok.Data;
 
 import java.util.UUID;
 
 @PrimaryKey
 @Table(name = "company")
-public @Data class company implements smiyaMoa9ata {
+public @Data class company implements schema {
 
-    private @PrimaryKey UUID id;
-    @AutoGenerateGetSet
-    private String name;
-    private String address;
-    private String city;
-    private String country;
-    private String postalCode;
-    private String phone;
-    private String email;
-    private String website;
+    public @PrimaryKey UUID id;
+    public String name;
+    public String address;
+    public String city;
+    public String country;
+    public String postalCode;
+    public String phone;
+    public String email;
+    public String website;
+    public String psw_hash;
+
+
 
     public company() {
     }

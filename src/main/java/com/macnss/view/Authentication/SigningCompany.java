@@ -1,9 +1,11 @@
 package com.macnss.view.Authentication;
 
-import com.macnss.app.Models.user.Administrator;
+import com.macnss.app.Models.company;
+import com.macnss.app.Models.user.AgentCNSS;
 import com.macnss.app.Services.Authentication;
-import com.macnss.database.dao.AdministratorDao;
-import com.macnss.view.Administrator.index;
+import com.macnss.database.dao.AgentCNSSDao;
+import com.macnss.database.dao.CompanyDao;
+import com.macnss.view.Agent.index;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,8 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-
-public class SigningAdministrator extends JFrame implements ActionListener {
+public class SigningCompany extends JFrame implements ActionListener {
 
     Authentication auth;
 
@@ -25,14 +26,15 @@ public class SigningAdministrator extends JFrame implements ActionListener {
 
     private String enteredUsername = null, enteredPassword = null;
 
-    public SigningAdministrator() {
+    public SigningCompany() {
         auth = new Authentication();
 
-        setTitle("Signing Administrator CNSS");
+        setTitle("Signing Company");
         setSize(560, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
+
 
         userIcon = new ImageIcon("user.png");
         passwordIcon = new ImageIcon("password.png");
@@ -61,7 +63,7 @@ public class SigningAdministrator extends JFrame implements ActionListener {
         resendCode = new JButton("Resend Code ?");
 
         JLabel logoLabel = new JLabel(new ImageIcon(logo));
-        logoLabel.setBounds(130, 40,300 , 282);
+        logoLabel.setBounds(130, 40, 300, 282);
 
         usernameLabel.setBounds(40, 340, 470, 30);
         usernameLabel.setIcon(userIcon);
@@ -130,15 +132,24 @@ public class SigningAdministrator extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
-            try {
-                new index(new Administrator());
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
             enteredUsername = username.getText();
             enteredPassword = new String(password.getPassword());
 
-            if (auth.preAuthenticateAdministrator(enteredUsername, enteredPassword)) {
+            if (auth.authenticateCompany(enteredUsername, enteredPassword)) {
+
+                company Company = null;
+                    Company = new CompanyDao().where("email", enteredUsername).and("psw_hash", enteredPassword).findOne();
+                try (CompanyDao dao = new CompanyDao()) {
+                } catch (Exception ex) {
+                    return;
+                }
+
+
+                try {
+                    new index(new AgentCNSS());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
 
                 remove(usernameLabel);
                 remove(username);
@@ -159,44 +170,23 @@ public class SigningAdministrator extends JFrame implements ActionListener {
 
                 revalidate();
                 repaint();
+                dispose();
 
             } else {
                 JOptionPane.showMessageDialog(this, "Username or Password Incorrect", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (e.getSource() == forgetPasswordButton) {
-            JOptionPane.showMessageDialog(this, "Contact the administrator", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (e.getSource() == confirmButton) {
-            if (code1.getText().isEmpty() || code2.getText().isEmpty() || code3.getText().isEmpty() || code4.getText().isEmpty() || code5.getText().isEmpty() || code6.getText().isEmpty() || Integer.parseInt(code1.getText()) > 9 || Integer.parseInt(code2.getText()) > 9 || Integer.parseInt(code3.getText()) > 9 || Integer.parseInt(code4.getText()) > 9 || Integer.parseInt(code5.getText()) > 9 || Integer.parseInt(code6.getText()) > 9) {
-                JOptionPane.showMessageDialog(this, "Enter a Valide Code", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            String code = code1.getText() + code2.getText() + code3.getText() + code4.getText() + code5.getText() + code6.getText();
-            if (auth.authenticateAdministrator(code, enteredUsername, enteredPassword)) {
-                try (AdministratorDao admin = new AdministratorDao(new Administrator())) {
-                    admin.get(enteredUsername).ifPresent(Admin -> {
-                        JOptionPane.showMessageDialog(this, "Welcome " + Admin.getFullName() + " !", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        try {
-                            new index(Admin);
-                        } catch (SQLException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    });
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Code Incorrect Or Expired !", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(this, "username or password  incorrect !", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (e.getSource() == resetButton) {
             username.setText("");
             password.setText("");
         }
+
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new SigningAdministrator().setVisible(true);
+            new SigningAgentCNS().setVisible(true);
         });
     }
 }

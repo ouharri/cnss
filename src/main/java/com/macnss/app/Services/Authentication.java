@@ -1,13 +1,12 @@
 package com.macnss.app.Services;
 
+import com.macnss.app.Models.company;
 import com.macnss.app.Models.user.Administrator;
 import com.macnss.app.Models.user.AgentCNSS;
-import com.macnss.database.dao.AdministratorDao;
-import com.macnss.database.dao.AgentCNSSDao;
-import com.macnss.database.dao.VerificationAdministratorsCodesDao;
-import com.macnss.database.dao.VerificationAgentCNSSCodesDao;
+import com.macnss.database.dao.*;
 import com.macnss.helpers.AuthenticationHelpers;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -148,6 +147,21 @@ public class Authentication {
             return false;
         } catch (Exception e) {
             throw new RuntimeException("Error during AgentCNSS authentication", e);
+        }
+    }
+
+    public boolean authenticateCompany(String username, String password) {
+        company Company = new CompanyDao().where("email", username).findOne();
+        System.out.println(Company);
+        boolean res = false;
+        try (CompanyDao dao = new CompanyDao()) {
+            if (Company == null) {
+                return false;
+            }
+
+            return AuthenticationHelpers.checkPassword(password, Company.getPsw_hash());
+        } catch (Exception e) {
+            return false;
         }
     }
 }

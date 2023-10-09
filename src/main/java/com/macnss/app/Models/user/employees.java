@@ -3,27 +3,21 @@ package com.macnss.app.Models.user;
 import com.macnss.Libs.orm.PrimaryKey;
 import com.macnss.Libs.orm.Table;
 
-import java.sql.Date;
 import java.util.UUID;
 
-import com.macnss.Libs.orm.smiyaMoa9ata;
+import com.macnss.Libs.orm.schema;
+import com.macnss.app.Models.Abstract.User;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Represents an Employee, extending the 'employee' class.
  */
 
 @Table(name = "employees")
-public @Data class employees implements smiyaMoa9ata {
+@EqualsAndHashCode(callSuper = true)
+public @Data class employees extends User implements schema {
 
-    private String cnie = null;
-    private String first_name = null;
-    private String last_name = null;
-    private String email = null;
-    private String phone = null;
-    private Date birthday = null;
-    private String pwd_hash = null;
-    private String gender = null;
     public @PrimaryKey UUID id;
 
 }
